@@ -1,39 +1,35 @@
 package AoLA.game;
 
-import AoLA.game.entities.Concrete.Player;
-import com.badlogic.gdx.ApplicationAdapter;
+import AoLA.game.screens.GameScreen;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.utils.ScreenUtils;
-
+import com.badlogic.gdx.utils.viewport.FitViewport;
+import com.badlogic.gdx.utils.viewport.Viewport;
 /** {@link com.badlogic.gdx.ApplicationListener} implementation shared by all platforms. */
 public class Main extends Game {
+    public static final float WORLD_W = 640;
+    public static final float WORLD_H = 480;
     public SpriteBatch batch;
-    private Player player;
-
+    public OrthographicCamera camera;
+    public Viewport viewport;
     @Override
     public void create() {
         batch = new SpriteBatch();
-        player = new Player(140, 210);
+        camera = new OrthographicCamera();
+        viewport = new FitViewport(WORLD_W, WORLD_H, camera);
+        setScreen(new AoLA.game.screens.GameScreen(this));
     }
-
-    @Override
-    public void render() {
-        super.render();
-        float delta = Gdx.graphics.getDeltaTime();
-        player.update(delta);
-
-        ScreenUtils.clear(0.15f, 0.15f, 0.2f, 1f);
-        batch.begin();
-        player.render(batch);
-        batch.end();
+    public void toggleFullscreen() {
+        if (Gdx.graphics.isFullscreen()) {
+            Gdx.graphics.setWindowedMode((int) WORLD_W, (int) WORLD_H);
+        } else {
+            Gdx.graphics.setFullscreenMode(Gdx.graphics.getDisplayMode());
+        }
     }
-
     @Override
     public void dispose() {
         batch.dispose();
-        player.dispose();
     }
 }
