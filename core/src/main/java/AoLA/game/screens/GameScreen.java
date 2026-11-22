@@ -3,57 +3,122 @@ package AoLA.game.screens;
 import AoLA.game.HUD.HUD;
 import AoLA.game.Main;
 import AoLA.game.entities.Concrete.Player;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
 
 public class GameScreen implements Screen {
     private final Main game;
     private Player player;
     private HUD hud;
+    private boolean paused=false;
+    private final MenuButton resumeButton= new MenuButton("Resume", new Color(0.16f,0.48f,0.24f,1f));
+    private final MenuButton restartButton= new MenuButton("Restart", new Color(0.62f,0.20f,0.17f,1f));
+    private final MenuButton leaderboardButton=new MenuButton("LeaderBoard",new Color(0.15f,0.30f,0.60f,1));
+    private final MenuButton exitButton=new MenuButton("Exit",new Color(0.30f,0.30f,0.34f,1f));
+    private final MenuButton[] pauseButtons={
+        resumeButton, restartButton, leaderboardButton, exitButton
+    };
     public GameScreen(Main game) {
         this.game = game;
+        startNewGame();
     }
-
+    private void startNewGame(){
+        if (player != null){
+            player.dispose();
+        }
+        if(hud != null){
+            hud.dispose();
+        }
+        player=new Player(100,100);
+        hud=new HUD();
+        paused=false;
+    }
     @Override
     public void show() {
-        player = new Player(100,100);
-        hud =new HUD();
+        game.resize(Gdx.graphics.getWidth(),Gdx.graphics.getHeight());
     }
-
-    @Override
     public void render(float delta) {
-        player.update(delta);
-        hud.update(delta);
-        hud.getHealthBar().setHealth(player.getHealth());
+        int width = Gdx.graphics.getWidth();
+        int height = Gdx.graphics.getHeight();
+        if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
+            paused = !paused;
+        }
+        float pauseTop = 0f;
+        if (!paused) {
+            player.update(delta);
+            hud.update(delta);
+            hud.getHealthBar().setHealth(player.getHealth());
+            game.submitScore(hud.getScore());
+        } else {
+            pauseTop = MenuButton.layoutColumn(pauseButtons, width, height);
+            if (handlePauseClicks()) {
+                return;
+            }
+        }
         ScreenUtils.clear(0.15f, 0.15f, 0.2f, 1);
         game.batch.begin();
         player.render(game.batch);
-        hud.render(game.batch, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        hud.render(game.batch, 0, 0, width, height);
+        game.batch.end();
+        if (paused) {
+            drawPauseMenu(width, height, pauseTop);
+        }
+    }
+    private boolean handlePauseClicks() {
+        if (resumeButton.isClicked()) {
+            paused = false;
+        } else if (restartButton.isClicked()) {
+            startNewGame();
+        } else if (leaderboardButton.isClicked()) {
+            game.setScreen(new LeaderBoardScreen(game, this));
+            return true;
+        } else if (exitButton.isClicked()) {
+            Gdx.app.exit();
+            return true;
+        }
+        return false;
+    }
+    private void drawPauseMenu(int width, int height, float top) {
+        float scale = MenuButton.scaleFor(width, height);
+        Gdx.gl.glEnable(GL20.GL_BLEND);
+        Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
+        game.shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+        game.shapeRenderer.setColor(0f, 0f, 0f, 0.7f);
+        game.shapeRenderer.rect(0f, 0f, width, height);
+        for (MenuButton button : pauseButtons) {
+            button.drawShape(game.shapeRenderer);
+        }
+        game.shapeRenderer.end();
+        Gdx.gl.glDisable(GL20.GL_BLEND);
+        game.batch.begin();
+        MenuButton.drawCentered(
+            game.batch, game.font, "PAUSED", 2f * scale,
+            width / 2f, top + 60f * scale
+        );
+        for (MenuButton button : pauseButtons) {
+            button.drawText(game.batch, game.font, scale);
+        }
+        game.font.getData().setScale(1f);
         game.batch.end();
     }
-
-
     @Override
     public void resize(int width, int height) {
-
+        game.resize(width, height);
     }
-
     @Override
     public void pause() {
-
     }
-
     @Override
     public void resume() {
-
     }
-
     @Override
     public void hide() {
-
     }
-
     @Override
     public void dispose() {
         player.dispose();
