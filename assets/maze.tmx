@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.10" tiledversion="1.12.2" orientation="orthogonal" renderorder="right-down" width="30" height="20" tilewidth="16" tileheight="16" infinite="0" nextlayerid="7" nextobjectid="8">
+ <tileset firstgid="1" source="Combined (1).tsx"/>
+ <tileset firstgid="51" source="main_tileset.tsx"/>
+ <tileset firstgid="183" source="akber-tileset.tsx"/>
+ <layer id="4" name="ground" width="30" height="20">
+  <data encoding="base64" compression="zlib">
+   eJztwTEBAAAAwqD1T20JT6AAAHgaCWAAAQ==
+  </data>
+ </layer>
+ <layer id="2" name="background" width="30" height="20">
+  <data encoding="base64" compression="zlib">
+   eJzTZWBg0B3Fo3iY4Fgi8EDZS2u7yZUf7naTggfKbmr6m1Z4pNk7ikcxpRgAH2h1GQ==
+  </data>
+ </layer>
+ <objectgroup id="5" name="object">
+  <object id="3" name="room_door" gid="97" x="336" y="144" width="16" height="16">
+   <properties>
+    <property name="locked" type="bool" value="true"/>
+   </properties>
+  </object>
+  <object id="4" name="room_door" type="door" gid="98" x="352" y="144" width="16" height="16">
+   <properties>
+    <property name="locked" type="bool" value="true"/>
+   </properties>
+  </object>
+  <object id="5" gid="140" x="416" y="32" width="16" height="16"/>
+  <object id="6" name="player_spawn" gid="183" x="0" y="112" width="16" height="16"/>
+ </objectgroup>
+ <layer id="3" name="walls" width="30" height="20">
+  <data encoding="base64" compression="zlib">
+   eJwzZ2Bg8CUBWzBQBpyA2AFKG5OAfUi0u5hK9pJqdykOe52B2JQIbEaB3djszQHiaAI4D8l9yPaTYzfMXmIBzH3OFNpNqr3I9mOzm9j84Eemvch2E5MucGFyAb50AQP40ssoGAWjYBSMAvwAAHfIJso=
+  </data>
+ </layer>
+</map>
