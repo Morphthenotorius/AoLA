@@ -10,10 +10,11 @@ import com.badlogic.gdx.utils.ScreenUtils;
 
 public class CreditsScreen implements Screen {
     private static final String[] CREDITS_LINES = {
-        "Game Design: [men]",
-        "Programming: [men]",
-        "Art and Animation: [men]",
-        "Sound: [men]"
+        "Faiq - Levels & Map Loading",
+        "Mahammad - Player & Enemies",
+        "Kanan - Collisions & Game Rules",
+        "Aydın - Rendering & Camera",
+        "Akbar - Screens, HUD & Docs"
     };
     private final Main game;
     private final Screen previousScreen;

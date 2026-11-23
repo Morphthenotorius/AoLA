@@ -20,7 +20,7 @@ public class GameScreen implements Screen {
     private final MenuButton resumeButton= new MenuButton("Resume", new Color(0.16f,0.48f,0.24f,1f));
     private final MenuButton restartButton= new MenuButton("Restart", new Color(0.62f,0.20f,0.17f,1f));
     private final MenuButton leaderboardButton=new MenuButton("LeaderBoard",new Color(0.15f,0.30f,0.60f,1));
-    private final MenuButton exitButton=new MenuButton("Exit",new Color(0.30f,0.30f,0.34f,1f));
+    private final MenuButton exitButton=new MenuButton("Exit to Menu",new Color(0.30f,0.30f,0.34f,1f));
     private final MenuButton[] pauseButtons={
         resumeButton, restartButton, leaderboardButton, exitButton
     };
@@ -79,7 +79,8 @@ public class GameScreen implements Screen {
             game.setScreen(new LeaderBoardScreen(game, this));
             return true;
         } else if (exitButton.isClicked()) {
-            Gdx.app.exit();
+            game.setScreen(new MenuScreen(game));
+            dispose();
             return true;
         }
         return false;

@@ -12,7 +12,9 @@ public class MenuScreen implements Screen {
     private final MenuButton startButton=new MenuButton("Start",new Color(0.16f,0.48f,0.24f,1f));
     private final MenuButton leaderboardButton=new MenuButton("Leaderboard",new Color(0.15f,0.30f,0.60f,1f));
     private final MenuButton creditsButton=new MenuButton("Credits",new Color(0.40f,0.25f,0.55f,1f));
-    private final MenuButton[] buttons={startButton,leaderboardButton,creditsButton};
+    private final MenuButton quitButton=new MenuButton("Quit Game", new Color(0.62f, 0.20f, 0.17f, 1f));
+    private final MenuButton[] buttons={startButton,leaderboardButton,creditsButton,quitButton};
+
     public MenuScreen(Main game) {
         this.game=game;
     }
@@ -28,6 +30,10 @@ public class MenuScreen implements Screen {
         float top=MenuButton.layoutColumn(buttons,width,height);
         if (startButton.isClicked()){
             game.setScreen(new GameScreen(game));
+            return;
+        }
+        if (quitButton.isClicked()) {
+            Gdx.app.exit();
             return;
         }
         if (leaderboardButton.isClicked()){
