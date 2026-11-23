@@ -3,6 +3,7 @@ package AoLA.game.screens;
 import AoLA.game.Main;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.utils.ScreenUtils;
@@ -51,11 +52,10 @@ public class MenuScreen implements Screen {
         }
         game.shapeRenderer.end();
         game.batch.begin();
-        MenuButton.drawCentered(game.batch,game.font,"AoLA",2f*scale,width/2f,top+60f*scale);
+        MenuButton.drawCentered(game.batch,game.menuFont,"AoLA",2f*scale,width/2f,top+60f*scale);
         for (MenuButton button:buttons){
-            button.drawText(game.batch,game.font,scale);
+            button.drawText(game.batch,game.menuFont,scale);
         }
-        game.font.getData().setScale(1f);
         game.batch.end();}
     @Override
     public void resize(int width, int height) {

@@ -8,9 +8,9 @@ public class CoinCounter {
     private int coins=0;
     private Texture coinTexture;
     private BitmapFont font;
-    public CoinCounter(){
+    public CoinCounter(BitmapFont font){
         coinTexture = new  Texture(Gdx.files.internal("coin.png"));
-        font = new BitmapFont();
+        this.font = font;
     }
     public void addCoin(){
         coins++;
@@ -23,10 +23,10 @@ public class CoinCounter {
     }
     public void render(SpriteBatch batch,float x,float y,float width,float height){
         batch.draw(coinTexture,x,y,width,height);
-        font.draw(batch,String.valueOf(coins),x+width+10,y+height/2f+6f);
+        font.getData().setScale(0.85f);
+        font.draw(batch,String.valueOf(coins),x+width+10,y+height/2f+font.getCapHeight()/2f);
     }
     public void dispose(){
         coinTexture.dispose();
-        font.dispose();
     }
 }

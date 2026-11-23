@@ -9,7 +9,6 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
 
 public class GameScreen implements Screen {
@@ -36,12 +35,12 @@ public class GameScreen implements Screen {
             hud.dispose();
         }
         player=new Player(100,100);
-        hud=new HUD();
+        hud=new HUD(game.menuFont);
         paused=false;
     }
     @Override
     public void show() {
-        game.resize(Gdx.graphics.getWidth(),Gdx.graphics.getHeight());
+        game.resizeCamera(Gdx.graphics.getWidth(),Gdx.graphics.getHeight());
     }
     public void render(float delta) {
         int width = Gdx.graphics.getWidth();
@@ -99,13 +98,12 @@ public class GameScreen implements Screen {
         Gdx.gl.glDisable(GL20.GL_BLEND);
         game.batch.begin();
         MenuButton.drawCentered(
-            game.batch, game.font, "PAUSED", 2f * scale,
+            game.batch, game.menuFont, "PAUSED", 2f * scale,
             width / 2f, top + 60f * scale
         );
         for (MenuButton button : pauseButtons) {
-            button.drawText(game.batch, game.font, scale);
+            button.drawText(game.batch, game.menuFont, scale);
         }
-        game.font.getData().setScale(1f);
         game.batch.end();
     }
     @Override

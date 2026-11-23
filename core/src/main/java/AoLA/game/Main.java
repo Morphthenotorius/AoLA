@@ -6,6 +6,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
@@ -16,6 +17,7 @@ public class Main extends Game {
     public static final float WORLD_W = 640;
     public static final float WORLD_H = 480;
     public SpriteBatch batch;
+    public BitmapFont menuFont;
     public OrthographicCamera camera;
     public Viewport viewport;
     public ShapeRenderer shapeRenderer;
@@ -26,7 +28,12 @@ public class Main extends Game {
     public void create() {
         batch = new SpriteBatch();
         shapeRenderer = new ShapeRenderer();
-        font = new BitmapFont();
+        FreeTypeFontGenerator generator=new FreeTypeFontGenerator(Gdx.files.internal("fonts/menu_font.ttf"));
+        FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
+        parameter.size = 32;
+        menuFont = generator.generateFont(parameter);
+        generator.dispose();
+        preferences=Gdx.app.getPreferences("AoLALeaderboard");
         preferences = Gdx.app.getPreferences("AoLALeaderboard");
         bestScore = preferences.getInteger("bestScore", 0);
         camera = new OrthographicCamera();
@@ -65,6 +72,9 @@ public class Main extends Game {
     }
     @Override
     public void dispose() {
+        if (getScreen() != null) {
+            getScreen().dispose();
+        }
         batch.dispose();
         font.dispose();
         shapeRenderer.dispose();

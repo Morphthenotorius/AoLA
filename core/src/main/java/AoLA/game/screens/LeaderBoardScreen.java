@@ -6,7 +6,6 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.utils.ScreenUtils;
-
 import java.awt.*;
 
 public class LeaderBoardScreen implements Screen {
@@ -37,10 +36,9 @@ public class LeaderBoardScreen implements Screen {
         backButton.drawShape(game.shapeRenderer);
         game.shapeRenderer.end();
         game.batch.begin();
-        MenuButton.drawCentered(game.batch, game.font, "LEADERBOARD", 2f * scale, width / 2f, titleY);
-        MenuButton.drawCentered(game.batch, game.font, "Best Score: " + game.getBestScore(), 1.4f * scale, width / 2f, titleY - 80f * scale);
-        backButton.drawText(game.batch,game.font,scale);
-        game.font.getData().setScale(1f);
+        MenuButton.drawCentered(game.batch, game.menuFont, "LEADERBOARD", 2f * scale, width / 2f, titleY);
+        MenuButton.drawCentered(game.batch, game.menuFont, "Best Score: " + game.getBestScore(), 1.4f * scale, width / 2f, titleY - 80f * scale);
+        backButton.drawText(game.batch,game.menuFont,scale);
         game.batch.end();
     }
     @Override

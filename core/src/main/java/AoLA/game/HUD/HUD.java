@@ -5,21 +5,18 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.GlyphLayout;
+
 public class HUD {
     private HealthBar healthBar;
     private KeyIndicator keyIndicator;
-    private final BitmapFont font = new BitmapFont();
-    private final GlyphLayout glyph = new GlyphLayout();
     private ShapeRenderer shapeRenderer;
 
     private CoinCounter coinCounter;
-    public HUD(){
+    public HUD(BitmapFont font){
         healthBar = new HealthBar();
         keyIndicator = new KeyIndicator();
         shapeRenderer = new ShapeRenderer();
-        font.getData().setScale(0.85f);
-        coinCounter = new CoinCounter();
+        coinCounter = new CoinCounter(font);
     }
     public void update(float delta){
         healthBar.update(delta);
@@ -28,7 +25,6 @@ public class HUD {
         float s  = KeyIndicator.SCALE;
         float fx = 20;
         float fy = height - 20 - KeyIndicator.FRAME_H * s;
-
         batch.end();
         shapeRenderer.setProjectionMatrix(batch.getProjectionMatrix());
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
@@ -58,6 +54,5 @@ public class HUD {
         keyIndicator.dispose();
         shapeRenderer.dispose();
         coinCounter.dispose();
-        font.dispose();
     }
 }
