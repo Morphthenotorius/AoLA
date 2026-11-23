@@ -32,19 +32,20 @@ public class LeaderBoardScreen implements Screen {
             return;
         }
         ScreenUtils.clear(0.025f,0.30f,0.045f,1f);
+        float titleY = height * 0.55f;
         game.shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
         backButton.drawShape(game.shapeRenderer);
         game.shapeRenderer.end();
         game.batch.begin();
-        MenuButton.drawCentered(game.batch,game.font,"LEADERBOARD",2f*scale,width/2f,height/2f);
-        MenuButton.drawCentered(game.batch,game.font,"Best Score;"+game.getBestScore(),1.4f*scale,width/2f,height/2f);
+        MenuButton.drawCentered(game.batch, game.font, "LEADERBOARD", 2f * scale, width / 2f, titleY);
+        MenuButton.drawCentered(game.batch, game.font, "Best Score: " + game.getBestScore(), 1.4f * scale, width / 2f, titleY - 80f * scale);
         backButton.drawText(game.batch,game.font,scale);
         game.font.getData().setScale(1f);
         game.batch.end();
     }
     @Override
     public void resize(int width, int height) {
-        game.resize(width,height);
+        game.resizeCamera(width,height);
     }
     @Override
     public void pause() {}

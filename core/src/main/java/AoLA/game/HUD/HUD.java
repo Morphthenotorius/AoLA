@@ -39,7 +39,7 @@ public class HUD {
         float coinWidth  = 32;
         float coinHeight = 32;
         float coinX = width  - 120;
-        float coinY = height - 52;
+        float coinY = fy + (KeyIndicator.FRAME_H * s - coinHeight) / 2f;
         coinCounter.render(batch, coinX, coinY, coinWidth, coinHeight);
     }
     public void addCoin(){

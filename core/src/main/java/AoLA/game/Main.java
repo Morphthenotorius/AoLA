@@ -1,9 +1,9 @@
 package AoLA.game;
 
-import AoLA.game.screens.GameScreen;
 import AoLA.game.screens.MenuScreen;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -48,6 +48,13 @@ public class Main extends Game {
             preferences.putInteger("bestScore", bestScore);
             preferences.flush();
         }
+    }
+    @Override
+    public void render() {
+        if (Gdx.input.isKeyJustPressed(Input.Keys.F11)) {
+            toggleFullscreen();
+        }
+        super.render();
     }
     public void toggleFullscreen() {
         if (Gdx.graphics.isFullscreen()) {

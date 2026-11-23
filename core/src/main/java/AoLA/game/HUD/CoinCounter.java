@@ -23,7 +23,7 @@ public class CoinCounter {
     }
     public void render(SpriteBatch batch,float x,float y,float width,float height){
         batch.draw(coinTexture,x,y,width,height);
-        font.draw(batch,String.valueOf(coins),x+width+10,y+height-5);
+        font.draw(batch,String.valueOf(coins),x+width+10,y+height/2f+6f);
     }
     public void dispose(){
         coinTexture.dispose();

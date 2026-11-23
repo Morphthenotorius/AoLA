@@ -11,7 +11,7 @@ import com.badlogic.gdx.utils.ScreenUtils;
 public class CreditsScreen implements Screen {
     private static final String[] CREDITS_LINES = {
         "Game Design: [men]",
-        "Programming: [men",
+        "Programming: [men]",
         "Art and Animation: [men]",
         "Sound: [men]"
     };
