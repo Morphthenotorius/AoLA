@@ -103,6 +103,7 @@ public abstract class Living {
 
     public void setPosition(Vector2 position) {
         this.position = position;
+        updateBounds();
     }
 
     public float getSpeed() {
