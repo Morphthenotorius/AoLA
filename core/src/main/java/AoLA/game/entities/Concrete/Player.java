@@ -2,6 +2,7 @@ package AoLA.game.entities.Concrete;
 
 import AoLA.game.Enums.Direction;
 import AoLA.game.entities.Abstract.Living;
+import AoLA.game.managers.CollisionManager;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Texture;
@@ -12,9 +13,11 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 
 public class Player extends Living {
+    private final CollisionManager collisionManager;
 
-    public Player(float x, float y) {
+    public Player(float x, float y, CollisionManager collisionManager) {
         super(new Vector2(x, y), 200f, 100);
+        this.collisionManager = collisionManager;
 
         initAnimations(
             "akber.asset/akber.down",
@@ -31,24 +34,20 @@ public class Player extends Living {
         isMoving = false;
 
         if (Gdx.input.isKeyPressed(Input.Keys.A) || Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
-            position.x -= speed * delta;
+            isMoving |= collisionManager.move(this, -speed * delta, 0f);
             currentDirection = Direction.LEFT;
-            isMoving = true;
         }
         if (Gdx.input.isKeyPressed(Input.Keys.D) || Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
-            position.x += speed * delta;
+            isMoving |= collisionManager.move(this, speed * delta, 0f);
             currentDirection = Direction.RIGHT;
-            isMoving = true;
         }
         if (Gdx.input.isKeyPressed(Input.Keys.W) || Gdx.input.isKeyPressed(Input.Keys.UP)) {
-            position.y += speed * delta;
+            isMoving |= collisionManager.move(this, 0f, speed * delta);
             currentDirection = Direction.UP;
-            isMoving = true;
         }
         if (Gdx.input.isKeyPressed(Input.Keys.S) || Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
-            position.y -= speed * delta;
+            isMoving |= collisionManager.move(this, 0f, -speed * delta);
             currentDirection = Direction.DOWN;
-            isMoving = true;
         }
 
         if (isMoving) {

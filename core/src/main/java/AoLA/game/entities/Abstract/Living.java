@@ -60,7 +60,7 @@ public abstract class Living {
     }
     public abstract void update(float delta);
     public void render (SpriteBatch batch){
-        batch.draw(getCurrentFrame(),position.x,position.y);
+        batch.draw(getCurrentFrame(), position.x, position.y, width, height);
     }
 
     protected TextureRegion getCurrentFrame(){
@@ -108,6 +108,14 @@ public abstract class Living {
 
     public float getSpeed() {
         return speed;
+    }
+
+    public float getWidth() {
+        return width;
+    }
+
+    public float getHeight() {
+        return height;
     }
 
     public void setSpeed(float speed) {

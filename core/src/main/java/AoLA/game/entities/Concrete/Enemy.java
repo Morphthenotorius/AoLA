@@ -3,11 +3,13 @@ package AoLA.game.entities.Concrete;
 import AoLA.game.Enums.Direction;
 import AoLA.game.Enums.EnemyState;
 import AoLA.game.entities.Abstract.Living;
+import AoLA.game.managers.CollisionManager;
 import com.badlogic.gdx.math.Vector2;
 
 public class Enemy extends Living {
     private EnemyState currentState = EnemyState.PATROL;
     private Player target;
+    private final CollisionManager collisionManager;
 
     //Patrol points
     private Vector2 pointA;
@@ -23,10 +25,12 @@ public class Enemy extends Living {
     private float attackTimer;
 
     public Enemy(float startX, float startY, float endX, float endY,
-                 float speed, int maxHealth, int attackDamage, String assetFolder, Player target) {
+                 float speed, int maxHealth, int attackDamage, String assetFolder, Player target,
+                 CollisionManager collisionManager) {
         super(new Vector2(startX, startY), speed, maxHealth);
 
         this.target = target;
+        this.collisionManager = collisionManager;
         this.attackDamage = attackDamage;
         this.pointA = new Vector2(startX, startY);
         this.pointB = new Vector2(endX, endY);
@@ -145,12 +149,19 @@ public class Enemy extends Living {
     //Acts
     private void moveTowards(Vector2 destination, float moveSpeed, float delta) {
         Vector2 direction = new Vector2(destination).sub(position).nor();
-        position.x += direction.x * moveSpeed * delta;
-        position.y += direction.y * moveSpeed * delta;
+        boolean moved = collisionManager.move(
+            this,
+            direction.x * moveSpeed * delta,
+            direction.y * moveSpeed * delta
+        );
 
         updateFacingDirection(direction);
-        isMoving = true;
-        stateTime += delta;
+        isMoving = moved;
+        if (isMoving) {
+            stateTime += delta;
+        } else {
+            stateTime = 0f;
+        }
     }
 
     private void updateFacingDirection(Vector2 direction) {
