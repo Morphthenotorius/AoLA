@@ -5,7 +5,7 @@ import AoLA.game.world.MazeMap;
 import com.badlogic.gdx.math.Vector2;
 
 public class CollisionManager {
-    private static final float CORNER_PADDING = 0f;
+    private static final float CORNER_PADDING = 1f;
     private final MazeMap maze;
     public CollisionManager(MazeMap maze) {
         this.maze = maze;
