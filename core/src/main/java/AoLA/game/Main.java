@@ -4,11 +4,13 @@ import AoLA.game.screens.MenuScreen;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.Preferences;
+import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.NinePatch;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
@@ -17,40 +19,66 @@ public class Main extends Game {
     public static final float WORLD_W = 640;
     public static final float WORLD_H = 480;
     public SpriteBatch batch;
+    public ShapeRenderer shapeRenderer;
     public BitmapFont menuFont;
     public OrthographicCamera camera;
     public Viewport viewport;
-    public ShapeRenderer shapeRenderer;
-    public BitmapFont font;
+    public NinePatch buttonNormal;
+    public BitmapFont titleFont;
+    public NinePatch buttonHover;
+    public Texture skullTexture;
+    public Texture uiPanel;
+    private Texture buttonNormalTexture;
+    private Texture buttonHoverTexture;
     private Preferences preferences;
     private int bestScore;
     @Override
     public void create() {
         batch = new SpriteBatch();
         shapeRenderer = new ShapeRenderer();
-        FreeTypeFontGenerator generator=new FreeTypeFontGenerator(Gdx.files.internal("fonts/menu_font.ttf"));
-        FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
+        FreeTypeFontGenerator generator =
+            new FreeTypeFontGenerator(Gdx.files.internal("fonts/menu_font.ttf"));
+        FreeTypeFontGenerator.FreeTypeFontParameter parameter =
+            new FreeTypeFontGenerator.FreeTypeFontParameter();
         parameter.size = 32;
+        parameter.minFilter = Texture.TextureFilter.Nearest;
+        parameter.magFilter = Texture.TextureFilter.Nearest;
         menuFont = generator.generateFont(parameter);
+        parameter.size = 64;
+        titleFont = generator.generateFont(parameter);
         generator.dispose();
-        preferences=Gdx.app.getPreferences("AoLALeaderboard");
+        skullTexture = new Texture(Gdx.files.internal("ui/skull.png"));
+        buttonNormalTexture = new Texture(Gdx.files.internal("ui/button_normal.png"));
+        buttonHoverTexture = new Texture(Gdx.files.internal("ui/button_hover.png"));
+        buttonNormalTexture.setFilter(
+            Texture.TextureFilter.Nearest, Texture.TextureFilter.Nearest);
+        uiPanel = new Texture(Gdx.files.internal("ui_panel.png"));
+        uiPanel.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+        buttonHoverTexture.setFilter(
+            Texture.TextureFilter.Nearest, Texture.TextureFilter.Nearest);
+        int edge = 6;
+        buttonNormal = new NinePatch(buttonNormalTexture, edge, edge, edge, edge);
+        buttonHover = new NinePatch(buttonHoverTexture, edge, edge, edge, edge);
+        skullTexture = new Texture(Gdx.files.internal("ui/skull.png"));
+        skullTexture.setFilter(
+            Texture.TextureFilter.Nearest, Texture.TextureFilter.Nearest);
         preferences = Gdx.app.getPreferences("AoLALeaderboard");
         bestScore = preferences.getInteger("bestScore", 0);
         camera = new OrthographicCamera();
         viewport = new FitViewport(WORLD_W, WORLD_H, camera);
         setScreen(new MenuScreen(this));
     }
-    public void resizeCamera(int width, int height){
+    public void resizeCamera(int width, int height) {
         camera.setToOrtho(false, width, height);
         camera.update();
         batch.setProjectionMatrix(camera.combined);
         shapeRenderer.setProjectionMatrix(camera.combined);
     }
-    public int getBestScore(){
+    public int getBestScore() {
         return bestScore;
     }
-    public void submitScore(int score){
-        if(score > bestScore){
+    public void submitScore(int score) {
+        if (score > bestScore) {
             bestScore = score;
             preferences.putInteger("bestScore", bestScore);
             preferences.flush();
@@ -76,7 +104,12 @@ public class Main extends Game {
             getScreen().dispose();
         }
         batch.dispose();
-        font.dispose();
         shapeRenderer.dispose();
+        menuFont.dispose();
+        buttonNormalTexture.dispose();
+        uiPanel.dispose();
+        titleFont.dispose();titleFont.dispose();
+        buttonHoverTexture.dispose();
+        skullTexture.dispose();
     }
 }

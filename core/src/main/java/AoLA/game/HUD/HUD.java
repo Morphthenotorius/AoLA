@@ -35,7 +35,7 @@ public class HUD {
         healthBar.render(shapeRenderer, fx, fy, s);
         shapeRenderer.end();
         batch.begin();
-        keyIndicator.render(batch, fx, fy);
+        keyIndicator.render(batch, fx, fy, healthBar.getHealth());
         String text=Math.round(healthBar.getHealth())+"%";
         glyph.setText(font,text);
         float barX=fx+30*s;

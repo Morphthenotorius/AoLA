@@ -36,7 +36,7 @@ public class LeaderBoardScreen implements Screen {
         backButton.drawShape(game.shapeRenderer);
         game.shapeRenderer.end();
         game.batch.begin();
-        MenuButton.drawCentered(game.batch, game.menuFont, "LEADERBOARD", 2f * scale, width / 2f, titleY);
+        MenuButton.drawCentered(game.batch, game.menuFont, "LEADERBOARD", 5f, width / 2f, height * 0.78f);
         MenuButton.drawCentered(game.batch, game.menuFont, "Best Score: " + game.getBestScore(), 1.4f * scale, width / 2f, titleY - 80f * scale);
         backButton.drawText(game.batch,game.menuFont,scale);
         game.batch.end();

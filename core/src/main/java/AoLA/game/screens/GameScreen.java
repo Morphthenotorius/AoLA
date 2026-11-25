@@ -7,6 +7,8 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
@@ -15,6 +17,8 @@ public class GameScreen implements Screen {
     private final Main game;
     private Player player;
     private HUD hud;
+    private Texture pauseUiTexture;
+    private TextureRegion pausePanel;
     private boolean paused=false;
     private final MenuButton resumeButton= new MenuButton("Resume", new Color(0.16f,0.48f,0.24f,1f));
     private final MenuButton restartButton= new MenuButton("Restart", new Color(0.62f,0.20f,0.17f,1f));
@@ -25,6 +29,10 @@ public class GameScreen implements Screen {
     };
     public GameScreen(Main game) {
         this.game = game;
+        MenuButton.applySkin(pauseButtons, game.buttonNormal,game.buttonHover);
+        pauseUiTexture = new Texture(Gdx.files.internal("FreeHorrorUi.png"));
+        pauseUiTexture.setFilter(Texture.TextureFilter.Nearest, Texture.TextureFilter.Nearest);
+        pausePanel = new TextureRegion(pauseUiTexture, 128, 132, 64, 72);
         startNewGame();
     }
     private void startNewGame(){
@@ -51,6 +59,16 @@ public class GameScreen implements Screen {
         float pauseTop = 0f;
         if (!paused) {
             player.update(delta);
+            player.update(delta);
+            if (Gdx.input.isKeyJustPressed(Input.Keys.K)) player.takeDamage(10);   
+            if (!player.isAlive()) {
+                int score = hud.getScore();
+                game.submitScore(score);
+                game.setScreen(new GameOverScreen(game, score));
+                dispose();
+                return;
+            }
+            hud.update(delta);
             hud.update(delta);
             hud.getHealthBar().setHealth(player.getHealth());
             game.submitScore(hud.getScore());
@@ -91,16 +109,22 @@ public class GameScreen implements Screen {
         game.shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
         game.shapeRenderer.setColor(0f, 0f, 0f, 0.7f);
         game.shapeRenderer.rect(0f, 0f, width, height);
+        game.shapeRenderer.end();
+        float panelWidth = Math.min(380f, width * 0.85f);
+        float panelHeight = Math.min(430f, height * 0.85f);
+        float panelX = (width - panelWidth) / 2f;
+        float panelY = (height - panelHeight) / 2f;
+        game.batch.begin();
+        game.batch.draw(pausePanel, panelX, panelY, panelWidth, panelHeight);
+        game.batch.end();
+        game.shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
         for (MenuButton button : pauseButtons) {
             button.drawShape(game.shapeRenderer);
         }
         game.shapeRenderer.end();
         Gdx.gl.glDisable(GL20.GL_BLEND);
         game.batch.begin();
-        MenuButton.drawCentered(
-            game.batch, game.menuFont, "PAUSED", 2f * scale,
-            width / 2f, top + 60f * scale
-        );
+        MenuButton.drawCentered(game.batch, game.menuFont, "PAUSED", 2f * scale, width / 2f, top + 60f * scale);
         for (MenuButton button : pauseButtons) {
             button.drawText(game.batch, game.menuFont, scale);
         }
@@ -123,5 +147,6 @@ public class GameScreen implements Screen {
     public void dispose() {
         player.dispose();
         hud.dispose();
+        pauseUiTexture.dispose();
     }
 }

@@ -18,6 +18,7 @@ public class MenuScreen implements Screen {
 
     public MenuScreen(Main game) {
         this.game=game;
+        MenuButton.applySkin(buttons,game.buttonNormal,game.buttonHover);
     }
     @Override
     public void show() {
@@ -27,6 +28,7 @@ public class MenuScreen implements Screen {
     public void render(float delta) {
         int width=Gdx.graphics.getWidth();
         int height=Gdx.graphics.getHeight();
+        ScreenUtils.clear(0.07f, 0.04f, 0.05f, 1f);
         float scale=MenuButton.scaleFor(width,height);
         float top=MenuButton.layoutColumn(buttons,width,height);
         if (startButton.isClicked()){
@@ -46,6 +48,14 @@ public class MenuScreen implements Screen {
             return;
         }
         ScreenUtils.clear(0.025f, 0.03f, 0.045f, 1f);
+        float panelWidth = Math.min(380f, width * 0.85f);
+        float panelHeight = Math.min(430f, height * 0.85f);
+        float panelX = (width - panelWidth) / 2f;
+        float panelY = (height - panelHeight) / 2f;
+        game.batch.begin();
+        game.batch.draw(game.uiPanel, panelX, panelY, panelWidth, panelHeight
+        );
+        game.batch.end();
         game.shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
         for(MenuButton button:buttons){
             button.drawShape(game.shapeRenderer);
