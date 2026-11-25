@@ -1,6 +1,7 @@
 package AoLA.game;
 
 import AoLA.game.entities.Concrete.Player;
+import AoLA.game.screens.GameScreen;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
@@ -16,24 +17,19 @@ public class Main extends Game {
     @Override
     public void create() {
         batch = new SpriteBatch();
-        player = new Player(140, 210);
+        setScreen(new GameScreen(this));
     }
 
     @Override
     public void render() {
         super.render();
-        float delta = Gdx.graphics.getDeltaTime();
-        player.update(delta);
-
-        ScreenUtils.clear(0.15f, 0.15f, 0.2f, 1f);
-        batch.begin();
-        player.render(batch);
-        batch.end();
     }
 
     @Override
     public void dispose() {
         batch.dispose();
-        player.dispose();
+        if(getScreen() != null){
+            getScreen().dispose();
+        }
     }
 }

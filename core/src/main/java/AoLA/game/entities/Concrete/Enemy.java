@@ -23,7 +23,7 @@ public class Enemy extends Living {
     private float attackTimer;
 
     public Enemy(float startX, float startY, float endX, float endY,
-                 float speed, int maxHealth, int attackDamage, String assetFolder, Player target) {
+                 float speed, int maxHealth, int attackDamage, String enemyName, Player target) {
         super(new Vector2(startX, startY), speed, maxHealth);
 
         this.target = target;
@@ -32,11 +32,13 @@ public class Enemy extends Living {
         this.pointB = new Vector2(endX, endY);
         this.currentPatrolTarget = pointB;
 
+        String basePath = "enemy_asset/" + enemyName + "_asset/" + enemyName;
+
         initAnimations(
-            assetFolder + "/down",
-            assetFolder + "/up",
-            assetFolder + "/left",
-            assetFolder + "/right",
+            basePath + "_down",
+            basePath + "_up",
+            basePath + "_left",
+            basePath + "_right",
             4,
             0.15f
         );
