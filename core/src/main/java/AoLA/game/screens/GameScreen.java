@@ -10,6 +10,8 @@ import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 
 public class GameScreen implements Screen {
     private final Main game;
@@ -35,7 +37,16 @@ public class GameScreen implements Screen {
 
     @Override
     public void render(float delta) {
+        if(Gdx.input.isKeyJustPressed(Input.Keys.F11)){
+            if(Gdx.graphics.isFullscreen()){
+                Gdx.graphics.setWindowedMode(1280, 720);
+            }
+            else{
+                Gdx.graphics.setFullscreenMode(Gdx.graphics.getDisplayMode());
+            }
+        }
         player.update(delta);
+        viewport.apply();
         camera.position.set(
             player.getPosition().x + 32f,
             player.getPosition().y + 32f,
