@@ -27,7 +27,7 @@ public class GameScreen implements Screen {
     @Override
     public void show() {
         camera=new OrthographicCamera();
-        viewport=new FitViewport(640,360,camera);
+        viewport=new FitViewport(1280,720,camera);
         maze=new MazeMap(game.batch);
         collisionManager = new CollisionManager(maze);
         Vector2 spawn=maze.getPlayerSpawn();

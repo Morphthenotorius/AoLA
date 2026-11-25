@@ -16,7 +16,7 @@ public class Player extends Living {
     private final CollisionManager collisionManager;
 
     public Player(float x, float y, CollisionManager collisionManager) {
-        super(new Vector2(x, y), 200f, 100);
+        super(new Vector2(x, y), 250f, 100);
         this.collisionManager = collisionManager;
 
         initAnimations(
