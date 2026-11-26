@@ -6,6 +6,8 @@ import AoLA.game.entities.Concrete.Player;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
+import AoLA.game.screens.DoorArrow;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -17,6 +19,7 @@ public class GameScreen implements Screen {
     private final Main game;
     private Player player;
     private HUD hud;
+    private DoorArrow doorArrow;
     private Texture pauseUiTexture;
     private TextureRegion pausePanel;
     private boolean paused=false;
@@ -42,6 +45,11 @@ public class GameScreen implements Screen {
         if(hud != null){
             hud.dispose();
         }
+        if (doorArrow != null) {
+            doorArrow.dispose();
+        }
+        doorArrow = new DoorArrow();
+        doorArrow.setTarget(500, 350);   // TEST: müvəqqəti qapı mövqeyi
         player=new Player(100,100);
         hud=new HUD(game.menuFont);
         paused=false;
@@ -60,7 +68,7 @@ public class GameScreen implements Screen {
         if (!paused) {
             player.update(delta);
             player.update(delta);
-            if (Gdx.input.isKeyJustPressed(Input.Keys.K)) player.takeDamage(10);   
+            if (Gdx.input.isKeyJustPressed(Input.Keys.K)) player.takeDamage(10);
             if (!player.isAlive()) {
                 int score = hud.getScore();
                 game.submitScore(score);
@@ -68,8 +76,12 @@ public class GameScreen implements Screen {
                 dispose();
                 return;
             }
+            if (Gdx.input.isKeyJustPressed(Input.Keys.Y)) {
+                game.setScreen(new YouWin(game, hud.getScore()));
+                return;
+            }
             hud.update(delta);
-            hud.update(delta);
+            doorArrow.update(delta);
             hud.getHealthBar().setHealth(player.getHealth());
             game.submitScore(hud.getScore());
         } else {
@@ -81,6 +93,7 @@ public class GameScreen implements Screen {
         ScreenUtils.clear(0.15f, 0.15f, 0.2f, 1);
         game.batch.begin();
         player.render(game.batch);
+        doorArrow.render(game.batch, player.getPosition(), 32f);
         hud.render(game.batch, 0, 0, width, height);
         game.batch.end();
         if (paused) {
@@ -147,6 +160,7 @@ public class GameScreen implements Screen {
     public void dispose() {
         player.dispose();
         hud.dispose();
+        doorArrow.dispose();
         pauseUiTexture.dispose();
     }
 }

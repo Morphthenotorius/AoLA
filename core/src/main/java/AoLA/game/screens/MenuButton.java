@@ -32,7 +32,6 @@ public class MenuButton {
             button.setSkin(normal, hover);
         }
     }
-
     public void setBounds(float centerX, float centerY, float width, float height) {
         bounds.set(centerX - width / 2f, centerY - height / 2f, width, height);
     }
@@ -89,8 +88,7 @@ public class MenuButton {
         float top = screenHeight / 2f + totalHeight / 2f - 20f * scale;
         for (int i = 0; i < buttons.length; i++) {
             float centerY = top - buttonHeight / 2f - i * (buttonHeight + gap);
-            buttons[i].setBounds(
-                screenWidth / 2f, centerY, buttonWidth, buttonHeight
+            buttons[i].setBounds(screenWidth / 2f, centerY, buttonWidth, buttonHeight
             );
         }
         return top;
@@ -102,8 +100,7 @@ public class MenuButton {
     ) {
         float buttonWidth = Math.min(220f, screenWidth * 0.75f);
         float buttonHeight = Math.min(55f, screenHeight * 0.14f);
-        button.setBounds(
-            screenWidth / 2f, buttonHeight * 1.2f, buttonWidth, buttonHeight
+        button.setBounds(screenWidth / 2f, buttonHeight * 1.2f, buttonWidth, buttonHeight
         );
     }
     public static void drawCentered(
@@ -114,8 +111,19 @@ public class MenuButton {
         float centerX,
         float topY
     ) {
+        drawCentered(batch, font, text, scale, centerX, topY, TEXT_COLOR);
+    }
+    public static void drawCentered(
+        SpriteBatch batch,
+        BitmapFont font,
+        String text,
+        float scale,
+        float centerX,
+        float topY,
+        Color color
+    ) {
         font.getData().setScale(scale);
-        font.setColor(TEXT_COLOR);
+        font.setColor(color);
         GlyphLayout layout = new GlyphLayout(font, text);
         font.draw(batch, text, centerX - layout.width / 2f, topY);
     }

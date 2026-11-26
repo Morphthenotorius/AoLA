@@ -1,0 +1,11 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=AoLA
+Comment=Adventure of Lil Akbar
+Exec=/home/admin_test/Desktop/AoLA/gradlew -p /home/admin_test/Desktop/AoLA lwjgl3:run
+Path=/home/admin_test/Desktop/AoLA
+Icon=/home/admin_test/Desktop/AoLA/assets/ui/icon.jpeg
+Terminal=false
+Categories=Game;
+StartupNotify=true

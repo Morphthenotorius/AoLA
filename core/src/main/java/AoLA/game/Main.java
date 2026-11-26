@@ -20,6 +20,7 @@ public class Main extends Game {
     public static final float WORLD_H = 480;
     public SpriteBatch batch;
     public ShapeRenderer shapeRenderer;
+    public Texture trophyTexture;
     public BitmapFont menuFont;
     public OrthographicCamera camera;
     public Viewport viewport;
@@ -27,6 +28,7 @@ public class Main extends Game {
     public BitmapFont titleFont;
     public NinePatch buttonHover;
     public Texture skullTexture;
+    public Texture wingsTexture;
     public Texture uiPanel;
     private Texture buttonNormalTexture;
     private Texture buttonHoverTexture;
@@ -48,6 +50,10 @@ public class Main extends Game {
         titleFont = generator.generateFont(parameter);
         generator.dispose();
         skullTexture = new Texture(Gdx.files.internal("ui/skull.png"));
+        wingsTexture = new Texture(Gdx.files.internal("ui/Wings.jpeg"));
+        trophyTexture = new Texture(Gdx.files.internal("ui/trophy.png"));
+        trophyTexture.setFilter(Texture.TextureFilter.Nearest, Texture.TextureFilter.Nearest);
+        wingsTexture.setFilter(Texture.TextureFilter.Nearest, Texture.TextureFilter.Nearest);
         buttonNormalTexture = new Texture(Gdx.files.internal("ui/button_normal.png"));
         buttonHoverTexture = new Texture(Gdx.files.internal("ui/button_hover.png"));
         buttonNormalTexture.setFilter(
@@ -107,8 +113,10 @@ public class Main extends Game {
         shapeRenderer.dispose();
         menuFont.dispose();
         buttonNormalTexture.dispose();
+        trophyTexture.dispose();
         uiPanel.dispose();
         titleFont.dispose();titleFont.dispose();
+        wingsTexture.dispose();
         buttonHoverTexture.dispose();
         skullTexture.dispose();
     }
