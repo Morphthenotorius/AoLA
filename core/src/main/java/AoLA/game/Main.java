@@ -1,5 +1,5 @@
 package AoLA.game;
-
+import AoLA.game.graphics.SoundManager;
 import AoLA.game.screens.MenuScreen;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
@@ -22,6 +22,8 @@ public class Main extends Game {
     public BitmapFont font;
     private Preferences preferences;
     private int bestScore;
+
+    public SoundManager soundManager;
     @Override
     public void create() {
         batch = new SpriteBatch();
@@ -31,6 +33,8 @@ public class Main extends Game {
         bestScore = preferences.getInteger("bestScore", 0);
         camera = new OrthographicCamera();
         viewport = new FitViewport(WORLD_W, WORLD_H, camera);
+        soundManager = new SoundManager();
+        soundManager.playMenuMusic();
         setScreen(new MenuScreen(this));
     }
     public void resizeCamera(int width, int height){
@@ -68,5 +72,6 @@ public class Main extends Game {
         batch.dispose();
         font.dispose();
         shapeRenderer.dispose();
+        soundManager.dispose();
     }
 }
