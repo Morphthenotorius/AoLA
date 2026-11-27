@@ -14,10 +14,16 @@ public class CollisionManager {
     private static final float CORNER_PADDING = 1f;
     private final MazeMap maze;
     private final GameRules gameRules;
+    private final Runnable onKeyCollected;
 
-    public CollisionManager(MazeMap maze, GameRules gameRules) {
+    public CollisionManager(
+        MazeMap maze,
+        GameRules gameRules,
+        Runnable onKeyCollected
+    ) {
         this.maze = maze;
         this.gameRules = gameRules;
+        this.onKeyCollected = onKeyCollected;
     }
 
     //Moves a character and stops it before it enters a wall.
@@ -61,6 +67,7 @@ public class CollisionManager {
             if (characterBounds.overlaps(keyBounds) && gameRules.collectKey(keyId)) {
                 key.setVisible(false);
                 openUnlockedDoors();
+                onKeyCollected.run();
             }
         }
     }

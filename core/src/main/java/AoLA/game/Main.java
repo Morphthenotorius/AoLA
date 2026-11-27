@@ -75,7 +75,6 @@ public class Main extends Game {
         camera = new OrthographicCamera();
         viewport = new FitViewport(WORLD_W, WORLD_H, camera);
         soundManager = new SoundManager();
-        soundManager.playMenuMusic();
         setScreen(new MenuScreen(this));
     }
     public void resizeCamera(int width, int height) {

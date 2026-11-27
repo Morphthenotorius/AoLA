@@ -86,30 +86,51 @@ public class GameScreen implements Screen {
         viewport = new FitViewport(1280, 720, camera);
         maze = new MazeMap(game.batch);
         gameRules = new GameRules();
-        collisionManager = new CollisionManager(maze, gameRules);
+        collisionManager = new CollisionManager(
+            maze,
+            gameRules,
+            () -> game.soundManager.playKeySound()
+        );
         startNewGame();
+        game.soundManager.playGameMusic();
     }
     public void render(float delta) {
         int width = Gdx.graphics.getWidth();
         int height = Gdx.graphics.getHeight();
         if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
             paused = !paused;
+            if (paused) {
+                game.soundManager.playPauseMusic();
+            } else {
+                game.soundManager.resumeGameMusic();
+            }
         }
         float pauseTop = 0f;
         if (!paused) {
+            int healthBefore = player.getHealth();
             player.update(delta);
             for(Enemy enemy : enemies){
                 enemy.update(delta);
             }
-            if (Gdx.input.isKeyJustPressed(Input.Keys.K)) player.takeDamage(10);
+            if (Gdx.input.isKeyJustPressed(Input.Keys.K)) {
+                player.takeDamage(10);
+            }
+            if (player.getHealth() < healthBefore) {
+                game.soundManager.playDamageSound();
+            }
             if (!player.isAlive()) {
                 int score = hud.getScore();
                 game.submitScore(score);
+                game.soundManager.stopGameMusic();
+                game.soundManager.playGameOverSound();
                 game.setScreen(new GameOverScreen(game, score));
                 dispose();
                 return;
             }
             if (Gdx.input.isKeyJustPressed(Input.Keys.Y)) {
+                game.soundManager.stopGameMusic();
+                game.soundManager.playVictorySound();
+
                 game.setScreen(new YouWin(game, hud.getScore()));
                 return;
             }
