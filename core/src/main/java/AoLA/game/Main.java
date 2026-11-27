@@ -22,6 +22,7 @@ public class Main extends Game {
     public SpriteBatch batch;
     public ShapeRenderer shapeRenderer;
     public Texture trophyTexture;
+    public Texture sandWatchTexture;
     public BitmapFont menuFont;
     public OrthographicCamera camera;
     public Viewport viewport;
@@ -35,6 +36,7 @@ public class Main extends Game {
     private Texture buttonHoverTexture;
     private Preferences preferences;
     private int bestScore;
+    private float bestTime;
     @Override
     public void create() {
         batch = new SpriteBatch();
@@ -54,6 +56,9 @@ public class Main extends Game {
         wingsTexture = new Texture(Gdx.files.internal("ui/Wings.jpeg"));
         trophyTexture = new Texture(Gdx.files.internal("ui/trophy.png"));
         trophyTexture.setFilter(Texture.TextureFilter.Nearest, Texture.TextureFilter.Nearest);
+        sandWatchTexture = new Texture(Gdx.files.internal("ui/SandWatch.png"), true);
+        sandWatchTexture.setFilter(
+            Texture.TextureFilter.MipMapLinearLinear, Texture.TextureFilter.Linear);
         wingsTexture.setFilter(Texture.TextureFilter.Nearest, Texture.TextureFilter.Nearest);
         buttonNormalTexture = new Texture(Gdx.files.internal("ui/button_normal.png"));
         buttonHoverTexture = new Texture(Gdx.files.internal("ui/button_hover.png"));
@@ -70,6 +75,7 @@ public class Main extends Game {
             Texture.TextureFilter.Nearest, Texture.TextureFilter.Nearest);
         preferences = Gdx.app.getPreferences("AoLALeaderboard");
         bestScore = preferences.getInteger("bestScore", 0);
+        bestTime = preferences.getFloat("bestTime", -1f);
         camera = new OrthographicCamera();
         viewport = new FitViewport(WORLD_W, WORLD_H, camera);
         setScreen(new MenuScreen(this));
@@ -83,10 +89,18 @@ public class Main extends Game {
     public int getBestScore() {
         return bestScore;
     }
-    public void submitScore(int score) {
-        if (score > bestScore) {
+    public float getBestTime() {
+        return bestTime;
+    }
+    public void submitScore(int score, float seconds) {
+        boolean moreCoins = score > bestScore;
+        boolean sameCoinsFaster = score == bestScore && score > 0
+            && (bestTime < 0f || seconds < bestTime);
+        if (moreCoins || sameCoinsFaster) {
             bestScore = score;
+            bestTime = seconds;
             preferences.putInteger("bestScore", bestScore);
+            preferences.putFloat("bestTime", bestTime);
             preferences.flush();
         }
     }
@@ -111,6 +125,7 @@ public class Main extends Game {
         menuFont.dispose();
         buttonNormalTexture.dispose();
         trophyTexture.dispose();
+        sandWatchTexture.dispose();
         uiPanel.dispose();
         titleFont.dispose();
         wingsTexture.dispose();

@@ -1,5 +1,6 @@
 package AoLA.game.screens;
 
+import AoLA.game.HUD.GameTimer;
 import AoLA.game.Main;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
@@ -11,6 +12,8 @@ import com.badlogic.gdx.utils.ScreenUtils;
 public class LeaderBoardScreen implements Screen {
     private final Main game;
     private final Screen previousScreen;
+    private final MenuButton timeBox =
+        new MenuButton("Time: --:--", new Color(0.30f, 0.30f, 0.34f, 1f));
     private final MenuButton scoreBox =
         new MenuButton("Score: 0", new Color(0.30f, 0.30f, 0.34f, 1f));
     private final MenuButton backButton =
@@ -20,6 +23,7 @@ public class LeaderBoardScreen implements Screen {
         this.previousScreen = previousScreen;
         backButton.setSkin(game.buttonNormal, game.buttonHover);
         scoreBox.setSkin(game.buttonNormal, game.buttonNormal);
+        timeBox.setSkin(game.buttonNormal, game.buttonNormal);
     }
     @Override
     public void show() {
@@ -42,14 +46,21 @@ public class LeaderBoardScreen implements Screen {
         float gap = 12f * scale;
         float groupWidth = trophyW + gap + buttonWidth;
         float groupX = (width - groupWidth) / 2f;
-        float scoreY = panelY + panelHeight * 0.5f;
-        scoreBox.setBounds(groupX + trophyW + gap + buttonWidth / 2f, scoreY, buttonWidth, buttonHeight);
+        float scoreY = panelY + panelHeight * 0.45f;
+        float timeY = scoreY + buttonHeight + gap;
+        float boxX = groupX + trophyW + gap + buttonWidth / 2f;
+        scoreBox.setBounds(boxX, scoreY, buttonWidth, buttonHeight);
         scoreBox.setText("Score: " + game.getBestScore());
+        timeBox.setBounds(boxX, timeY, buttonWidth, buttonHeight);
+        timeBox.setText("Time: " + GameTimer.format(game.getBestTime()));
         backButton.setBounds(width / 2f, panelY + buttonHeight * 1.7f, buttonWidth, buttonHeight);
         if (backButton.isClicked() || Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
             game.setScreen(previousScreen);
             return;
         }
+        float sandH = buttonHeight;
+        float sandW = sandH * game.sandWatchTexture.getWidth() / game.sandWatchTexture.getHeight();
+        float sandX = groupX + (trophyW - sandW) / 2f;
         game.menuFont.getData().setScale(1f);
         float titleWidthAtOne = new GlyphLayout(game.menuFont, "LEADERBOARD").width;
         float titleScale = Math.min(2f * scale, panelWidth * 0.75f / titleWidthAtOne);
@@ -58,6 +69,8 @@ public class LeaderBoardScreen implements Screen {
         game.batch.draw(game.uiPanel, panelX, panelY, panelWidth, panelHeight);
         MenuButton.drawCentered(game.batch, game.menuFont, "LEADERBOARD", titleScale, width / 2f, panelY + panelHeight - 90f * scale);
         game.batch.draw(game.trophyTexture, groupX, scoreY - trophyH / 2f, trophyW, trophyH);
+        game.batch.draw(game.sandWatchTexture, sandX, timeY - sandH / 2f, sandW, sandH);
+        timeBox.drawText(game.batch, game.menuFont, scale);
         scoreBox.drawText(game.batch, game.menuFont, scale);
         backButton.drawText(game.batch, game.menuFont, scale);
         game.batch.end();

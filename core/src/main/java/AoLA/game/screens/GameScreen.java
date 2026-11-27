@@ -1,28 +1,28 @@
-
 package AoLA.game.screens;
 
 import AoLA.game.HUD.HUD;
 import AoLA.game.Main;
 import AoLA.game.entities.Concrete.Player;
+import AoLA.game.managers.CollisionManager;
 import AoLA.game.rules.GameRules;
+import AoLA.game.world.MazeMap;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
-import AoLA.game.screens.DoorArrow;
-import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.ScreenUtils;
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Color;
-import AoLA.game.managers.CollisionManager;
-import AoLA.game.world.MazeMap;
-import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
 public class GameScreen implements Screen {
+    private static final float PLAYER_HALF_SIZE = 32f;
+    private static final float EXIT_REACH_DISTANCE = 48f;
     private final Main game;
     private Player player;
     private MazeMap maze;
@@ -32,25 +32,23 @@ public class GameScreen implements Screen {
     private Viewport viewport;
     private HUD hud;
     private DoorArrow doorArrow;
-    private Texture pauseUiTexture;
-    private TextureRegion pausePanel;
-    private boolean paused=false;
-    private final MenuButton resumeButton= new MenuButton("Resume", new Color(0.16f,0.48f,0.24f,1f));
-    private final MenuButton restartButton= new MenuButton("Restart", new Color(0.62f,0.20f,0.17f,1f));
-    private final MenuButton leaderboardButton=new MenuButton("LeaderBoard",new Color(0.15f,0.30f,0.60f,1));
-    private final MenuButton exitButton=new MenuButton("Exit to Menu",new Color(0.30f,0.30f,0.34f,1f));
-    private final MenuButton[] pauseButtons={
+    private final Texture pauseUiTexture;
+    private final TextureRegion pausePanel;
+    private boolean paused = false;
+    private final MenuButton resumeButton = new MenuButton("Resume", new Color(0.16f, 0.48f, 0.24f, 1f));
+    private final MenuButton restartButton = new MenuButton("Restart", new Color(0.62f, 0.20f, 0.17f, 1f));
+    private final MenuButton leaderboardButton = new MenuButton("Leaderboard", new Color(0.15f, 0.30f, 0.60f, 1f));
+    private final MenuButton exitButton = new MenuButton("Exit to Menu", new Color(0.30f, 0.30f, 0.34f, 1f));
+    private final MenuButton[] pauseButtons = {
         resumeButton, restartButton, leaderboardButton, exitButton
     };
     public GameScreen(Main game) {
         this.game = game;
-        MenuButton.applySkin(pauseButtons, game.buttonNormal,game.buttonHover);
+        MenuButton.applySkin(pauseButtons, game.buttonNormal, game.buttonHover);
         pauseUiTexture = new Texture(Gdx.files.internal("FreeHorrorUi.png"));
         pauseUiTexture.setFilter(Texture.TextureFilter.Nearest, Texture.TextureFilter.Nearest);
         pausePanel = new TextureRegion(pauseUiTexture, 128, 132, 64, 72);
     }
-
-
     private void startNewGame() {
         if (player != null) {
             player.dispose();
@@ -84,6 +82,22 @@ public class GameScreen implements Screen {
             startNewGame();
         }
     }
+    private boolean reachedExit() {
+        if (gameRules.getCollectedKeyCount() <= 0) {
+            return false;
+        }
+        Vector2 exit = maze.getExitPosition();
+        float dx = player.getPosition().x + PLAYER_HALF_SIZE - exit.x;
+        float dy = player.getPosition().y + PLAYER_HALF_SIZE - exit.y;
+        return dx * dx + dy * dy <= EXIT_REACH_DISTANCE * EXIT_REACH_DISTANCE;
+    }
+    private void showWin() {
+        int score = hud.getScore();
+        game.submitScore(score, hud.getTimer().getElapsedSeconds());
+        game.setScreen(new YouWin(game, score));
+        dispose();
+    }
+    @Override
     public void render(float delta) {
         int width = Gdx.graphics.getWidth();
         int height = Gdx.graphics.getHeight();
@@ -100,20 +114,24 @@ public class GameScreen implements Screen {
             if (Gdx.input.isKeyJustPressed(Input.Keys.K)) player.takeDamage(10);
             if (!player.isAlive()) {
                 int score = hud.getScore();
-                game.submitScore(score);
+                game.submitScore(score, hud.getTimer().getElapsedSeconds());
                 game.setScreen(new GameOverScreen(game, score));
                 dispose();
                 return;
             }
             if (Gdx.input.isKeyJustPressed(Input.Keys.Y)) {
-                game.setScreen(new YouWin(game, hud.getScore()));
+                showWin();
+                return;
+            }
+            if (reachedExit()) {
+                showWin();
                 return;
             }
             hud.update(delta);
             doorArrow.update(delta);
             hud.getHealthBar().setHealth(player.getHealth());
             hud.getKeyIndicator().setKeyCount(gameRules.getCollectedKeyCount());
-            game.submitScore(hud.getScore());
+            game.submitScore(hud.getScore(), hud.getTimer().getElapsedSeconds());
         } else {
             pauseTop = MenuButton.layoutColumn(pauseButtons, width, height);
             if (handlePauseClicks()) {
@@ -122,8 +140,8 @@ public class GameScreen implements Screen {
         }
         viewport.apply();
         camera.position.set(
-            player.getPosition().x + 32f,
-            player.getPosition().y + 32f,
+            player.getPosition().x + PLAYER_HALF_SIZE,
+            player.getPosition().y + PLAYER_HALF_SIZE,
             0f
         );
         camera.update();
@@ -133,7 +151,7 @@ public class GameScreen implements Screen {
         game.batch.begin();
         maze.renderObjects(game.batch);
         player.render(game.batch);
-        doorArrow.render(game.batch, player.getPosition(), 32f);
+        doorArrow.render(game.batch, player.getPosition(), PLAYER_HALF_SIZE);
         game.batch.end();
 
         game.batch.setProjectionMatrix(game.camera.combined);
@@ -203,10 +221,10 @@ public class GameScreen implements Screen {
     }
     @Override
     public void dispose() {
-        player.dispose();
-        hud.dispose();
-        doorArrow.dispose();
+        if (player != null) player.dispose();
+        if (hud != null) hud.dispose();
+        if (doorArrow != null) doorArrow.dispose();
+        if (maze != null) maze.dispose();
         pauseUiTexture.dispose();
-        maze.dispose();
     }
 }
