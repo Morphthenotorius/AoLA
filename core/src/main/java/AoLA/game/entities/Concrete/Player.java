@@ -16,7 +16,7 @@ public class Player extends Living {
     private final CollisionManager collisionManager;
 
     public Player(float x, float y, CollisionManager collisionManager) {
-        super(new Vector2(x, y), 250f, 100);
+        super(new Vector2(x, y), 250f, 100,55f,80f);
         this.collisionManager = collisionManager;
 
         initAnimations(
@@ -31,6 +31,7 @@ public class Player extends Living {
 
     @Override
     public void update(float delta) {
+        updateCombatEffects(delta);
         isMoving = false;
 
         if (Gdx.input.isKeyPressed(Input.Keys.A) || Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
@@ -52,7 +53,8 @@ public class Player extends Living {
 
         if (isMoving) {
             stateTime += delta;
-        } else {
+        }
+        else {
             stateTime = 0f;
         }
 

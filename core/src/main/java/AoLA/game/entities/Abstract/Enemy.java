@@ -1,15 +1,13 @@
-package AoLA.game.entities.Concrete;
+package AoLA.game.entities.Abstract;
 
 import AoLA.game.Enums.Direction;
 import AoLA.game.Enums.EnemyState;
-import AoLA.game.entities.Abstract.Living;
-import AoLA.game.managers.CollisionManager;
+import AoLA.game.entities.Concrete.Player;
 import com.badlogic.gdx.math.Vector2;
 
-public class Enemy extends Living {
+public abstract class Enemy extends Living {
     private EnemyState currentState = EnemyState.PATROL;
     private Player target;
-    private final CollisionManager collisionManager;
 
     //Patrol points
     private Vector2 pointA;
@@ -17,30 +15,30 @@ public class Enemy extends Living {
     private Vector2 currentPatrolTarget;
 
     //Specs
-    private float detectionRadius;
-    private float loseSightRadius;
-    private float attackRange;
-    private int attackDamage;
-    private float attackCooldown;
-    private float attackTimer;
+    protected float detectionRadius;
+    protected float loseSightRadius;
+    protected float attackRange;
+    protected int attackDamage;
+    protected float attackCooldown;
+    protected float attackTimer;
 
     public Enemy(float startX, float startY, float endX, float endY,
-                 float speed, int maxHealth, int attackDamage, String assetFolder, Player target,
-                 CollisionManager collisionManager) {
-        super(new Vector2(startX, startY), speed, maxHealth);
+                 float speed, int maxHealth, int attackDamage, String enemyName, Player target,float width,float height) {
+        super(new Vector2(startX, startY), speed, maxHealth,width,height);
 
         this.target = target;
-        this.collisionManager = collisionManager;
         this.attackDamage = attackDamage;
         this.pointA = new Vector2(startX, startY);
         this.pointB = new Vector2(endX, endY);
         this.currentPatrolTarget = pointB;
 
+        String basePath = "enemy_asset/" + enemyName + "_asset/" + enemyName;
+
         initAnimations(
-            assetFolder + "/down",
-            assetFolder + "/up",
-            assetFolder + "/left",
-            assetFolder + "/right",
+            basePath + "_down",
+            basePath + "_up",
+            basePath + "_left",
+            basePath + "_right",
             4,
             0.15f
         );
@@ -48,31 +46,14 @@ public class Enemy extends Living {
 
     @Override
     public void update(float delta) {
-        if(!this.isAlive() || !target.isAlive()){
+        updateCombatEffects(delta);
+        if(!canAct()){
             return;
         }
 
-        else if(this.attackTimer > 0){
-            attackTimer -=delta;
-        }
-
-        float distance = position.dst(target.getPosition());
-        if(distance <= attackRange){
-            currentState = EnemyState.ATTACK;
-        }
-
-        else if (distance <= detectionRadius || (currentState == EnemyState.ATTACK && distance <= loseSightRadius)){
-            currentState = EnemyState.CHASE;
-        }
-
-        else if(distance > loseSightRadius){
-            currentState = EnemyState.PATROL;
-        }
-
-        switch (getCurrentState()){
-            case PATROL:
-                patrol(delta);
-        }
+        updateCooldowns(delta);
+        updateState();
+        executeState(delta);
     }
 
     private boolean canAct() {
@@ -85,6 +66,11 @@ public class Enemy extends Living {
                 attackTimer -= delta;
             }
         }
+    }
+
+
+    public EnemyState getCurrentState(){
+        return this.currentState;
     }
 
     private void updateState() {
@@ -146,39 +132,11 @@ public class Enemy extends Living {
         }
     }
 
-    //Acts
-    private void moveTowards(Vector2 destination, float moveSpeed, float delta) {
-        Vector2 direction = new Vector2(destination).sub(position).nor();
-        boolean moved = collisionManager.move(
-            this,
-            direction.x * moveSpeed * delta,
-            direction.y * moveSpeed * delta
-        );
-
-        updateFacingDirection(direction);
-        isMoving = moved;
-        if (isMoving) {
-            stateTime += delta;
-        } else {
-            stateTime = 0f;
-        }
+    protected void initCombatSpecs(float detectionRadius, float loseSightRadius, float attackRange, float attackCooldown){
+        this.detectionRadius = detectionRadius;
+        this.loseSightRadius = loseSightRadius;
+        this.attackRange = attackRange;
+        this.attackCooldown = attackCooldown;
     }
-
-    private void updateFacingDirection(Vector2 direction) {
-        if (Math.abs(direction.x) > Math.abs(direction.y)) {
-            currentDirection = (direction.x > 0) ? Direction.RIGHT : Direction.LEFT;
-        } else {
-            currentDirection = (direction.y > 0) ? Direction.UP : Direction.DOWN;
-        }
-    }
-
-    private void stopAnimation() {
-        isMoving = false;
-        stateTime = 0f;
-    }
-    public EnemyState getCurrentState(){
-        return this.currentState;
-    }
-
 
 }

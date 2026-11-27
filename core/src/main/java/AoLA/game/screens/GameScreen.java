@@ -2,6 +2,10 @@ package AoLA.game.screens;
 
 import AoLA.game.HUD.HUD;
 import AoLA.game.Main;
+import AoLA.game.entities.Abstract.EnemyFactory;
+import AoLA.game.entities.Abstract.Enemy;
+import AoLA.game.entities.Concrete.Enemies.Mummy;
+import AoLA.game.entities.Concrete.Enemies.Skeleton;
 import AoLA.game.entities.Concrete.Player;
 import AoLA.game.rules.GameRules;
 import com.badlogic.gdx.Input;
@@ -21,7 +25,11 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class GameScreen implements Screen {
+    private List<Enemy> enemies;
     private final Main game;
     private Player player;
     private MazeMap maze;
@@ -65,6 +73,12 @@ public class GameScreen implements Screen {
         camera.position.set(spawn.x, spawn.y, 0);
         hud=new HUD(game.menuFont);
         paused=false;
+
+        enemies = new ArrayList<>();
+        EnemyFactory<Skeleton> skeletonFactory = Skeleton::new;
+        EnemyFactory<Mummy> mummyFactory = Mummy :: new;
+        enemies.add(skeletonFactory.create(300,300,500,300,player));
+        enemies.add(mummyFactory.create(200,200,400,210,player));
     }
     @Override
     public void show() {
@@ -84,6 +98,9 @@ public class GameScreen implements Screen {
         float pauseTop = 0f;
         if (!paused) {
             player.update(delta);
+            for(Enemy enemy : enemies){
+                enemy.update(delta);
+            }
             if (Gdx.input.isKeyJustPressed(Input.Keys.K)) player.takeDamage(10);
             if (!player.isAlive()) {
                 int score = hud.getScore();
@@ -119,6 +136,9 @@ public class GameScreen implements Screen {
         game.batch.begin();
         maze.renderObjects(game.batch);
         player.render(game.batch);
+        for(Enemy enemy: enemies){
+            enemy.render(game.batch);
+        }
         doorArrow.render(game.batch, player.getPosition(), 32f);
         game.batch.end();
 
@@ -194,5 +214,10 @@ public class GameScreen implements Screen {
         doorArrow.dispose();
         pauseUiTexture.dispose();
         maze.dispose();
+        if(enemies != null){
+            for(Enemy enemy: enemies){
+                enemy.dispose();
+            }
+        }
     }
 }
