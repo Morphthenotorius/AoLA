@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.12.2-2-geb83ddb9" orientation="orthogonal" renderorder="right-down" width="101" height="101" tilewidth="32" tileheight="32" infinite="0" backgroundcolor="#26103a" nextlayerid="16" nextobjectid="107">
+<map version="1.10" tiledversion="1.12.2-2-geb83ddb9" orientation="orthogonal" renderorder="right-down" width="101" height="101" tilewidth="32" tileheight="32" infinite="0" backgroundcolor="#26103a" nextlayerid="16" nextobjectid="122">
  <properties>
   <property name="description" value="20x20 maze from the supplied PDF, corridors 4 tiles wide"/>
  </properties>
@@ -351,15 +351,38 @@
   <object id="67" name="PlayerSpawn" gid="12" x="1516" y="109" width="32" height="32"/>
  </objectgroup>
  <objectgroup id="11" name="triggersObjects">
-  <object id="68" name="Key1" gid="8" x="2326" y="116" width="32" height="32"/>
-  <object id="69" name="key2" gid="1073741832" x="2958" y="896" width="32" height="32"/>
-  <object id="70" name="key3" gid="8" x="1358.67" y="2032" width="32" height="32"/>
+  <object id="68" name="Key1" gid="8" x="2326" y="116" width="32" height="32">
+   <properties>
+    <property name="keyId" type="int" value="1"/>
+   </properties>
+  </object>
+  <object id="69" name="key2" gid="8" x="2958" y="896" width="32" height="32">
+   <properties>
+    <property name="keyId" type="int" value="2"/>
+   </properties>
+  </object>
+  <object id="70" name="key3" gid="8" x="1358.67" y="2032" width="32" height="32">
+   <properties>
+    <property name="keyId" type="int" value="3"/>
+   </properties>
+  </object>
   <object id="90" name="Exit" x="1633.33" y="3208" width="124" height="22.6667"/>
+  <object id="119" gid="7" x="2754.67" y="796" width="32" height="32"/>
+  <object id="120" gid="7" x="993.333" y="160" width="32" height="32"/>
+  <object id="121" gid="7" x="125.333" y="710.667" width="32" height="32"/>
  </objectgroup>
  <objectgroup id="12" name="itemsObjects" offsetx="106" offsety="-6"/>
  <objectgroup id="13" name="doorsObjects">
-  <object id="88" name="Door1" x="2593.33" y="961.333" width="126.667" height="28.6667"/>
-  <object id="89" name="Door2" x="1951.33" y="1120.67" width="128.667" height="30"/>
+  <object id="88" name="Door1" x="2593.33" y="961.333" width="126.667" height="28.6667">
+   <properties>
+    <property name="keyId" type="int" value="1"/>
+   </properties>
+  </object>
+  <object id="89" name="Door2" x="1951.33" y="1120.67" width="128.667" height="30">
+   <properties>
+    <property name="keyId" type="int" value="2"/>
+   </properties>
+  </object>
   <object id="94" name="Door3" x="833" y="2239" width="125" height="32">
    <properties>
     <property name="keyId" type="int" value="3"/>
@@ -379,5 +402,18 @@
   <object id="104" gid="11" x="102.182" y="2512.97" width="32" height="32"/>
   <object id="105" gid="11" x="717.333" y="1388.73" width="32" height="32"/>
  </objectgroup>
- <objectgroup id="15" name="trapsObjects"/>
+ <objectgroup id="15" name="trapsObjects">
+  <object id="107" gid="10" x="2521.33" y="320" width="32" height="32"/>
+  <object id="108" gid="10" x="2686.67" y="316" width="32" height="32"/>
+  <object id="109" gid="10" x="2590.67" y="536" width="32" height="32"/>
+  <object id="110" gid="10" x="2562.67" y="742.667" width="32" height="32"/>
+  <object id="111" gid="10" x="2881.33" y="797.333" width="32" height="32"/>
+  <object id="112" gid="10" x="2718.67" y="964" width="32" height="32"/>
+  <object id="113" gid="10" x="2048" y="1110.67" width="32" height="32"/>
+  <object id="114" gid="10" x="794.667" y="2082.67" width="32" height="32"/>
+  <object id="115" gid="10" x="961.333" y="1918.67" width="32" height="32"/>
+  <object id="116" gid="10" x="1248" y="2081.33" width="32" height="32"/>
+  <object id="117" gid="10" x="1026.67" y="2328" width="32" height="32"/>
+  <object id="118" gid="10" x="1468" y="3204" width="32" height="32"/>
+ </objectgroup>
 </map>

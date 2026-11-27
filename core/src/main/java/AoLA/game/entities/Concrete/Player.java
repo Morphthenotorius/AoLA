@@ -57,5 +57,6 @@ public class Player extends Living {
         }
 
         updateBounds();
+        collisionManager.collectKeys(this);
     }
 }

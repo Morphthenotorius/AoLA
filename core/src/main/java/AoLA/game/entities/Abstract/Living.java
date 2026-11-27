@@ -34,8 +34,8 @@ public abstract class Living {
         this.speed = speed;
         this.health = maxHealth;
         this.maxHealth = maxHealth;
-        this.width = 70f;
-        this.height = 70f;
+        this.width = 50f;
+        this.height = 64f;
         this.bounds = new Rectangle(position.x,position.y,width,height);
 
     }

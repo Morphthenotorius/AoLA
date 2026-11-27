@@ -57,6 +57,7 @@ public class GameScreen implements Screen {
         maze.render(camera);
         game.batch.setProjectionMatrix(camera.combined);
         game.batch.begin();
+        maze.renderObjects(game.batch);
         player.render(game.batch);
         game.batch.end();
     }

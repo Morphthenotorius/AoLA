@@ -2,19 +2,25 @@ package AoLA.game.world;
 
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
+import com.badlogic.gdx.maps.tiled.objects.TiledMapTileMapObject;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.badlogic.gdx.maps.MapLayer;
 import com.badlogic.gdx.maps.MapObject;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
 public class MazeMap implements Disposable {
     public static final String MAP_PATH = "maps/maze.tmx";
     public static final String WALLS_LAYER = "Walls";
+    public static final String DOORS_TILE_LAYER = "Doors";
+    public static final String KEYS_OBJECT_LAYER = "triggersObjects";
+    public static final String DOORS_OBJECT_LAYER = "doorsObjects";
     public static final String PLAYER_SPAWN_NAME = "PlayerSpawn";
 
     private final TiledMap map;
@@ -112,5 +118,55 @@ public class MazeMap implements Disposable {
     public void render(OrthographicCamera camera) {
         renderer.setView(camera);
         renderer.render();
+    }
+
+    /** Draws the tile-backed objects stored in the map's object layers. */
+    public void renderObjects(Batch batch) {
+        for (MapLayer layer : map.getLayers()) {
+            if (!layer.isVisible()) {
+                continue;
+            }
+
+            for (MapObject object : layer.getObjects()) {
+                if (!object.isVisible() || PLAYER_SPAWN_NAME.equals(object.getName()) || !(object instanceof TiledMapTileMapObject)) {
+                    continue;
+                }
+
+                TiledMapTileMapObject tileObject = (TiledMapTileMapObject) object;
+                TextureRegion region = tileObject.getTextureRegion();
+
+                batch.draw(
+                    region,
+                    tileObject.getX(),
+                    tileObject.getY(),
+                    tileObject.getOriginX(),
+                    tileObject.getOriginY(),
+                    region.getRegionWidth(),
+                    region.getRegionHeight(),
+                    tileObject.getScaleX(),
+                    tileObject.getScaleY(),
+                    tileObject.getRotation()
+                );
+            }
+        }
+    }
+
+    /** Removes the door tiles that overlap this door object. */
+    public void openDoor(Rectangle doorBounds) {
+        TiledMapTileLayer doorsLayer = (TiledMapTileLayer) map.getLayers().get(DOORS_TILE_LAYER);
+        if (doorsLayer == null) {
+            return;
+        }
+
+        int firstColumn = worldToCol(doorBounds.x);
+        int lastColumn = worldToCol(doorBounds.x + doorBounds.width - 1f);
+        int firstRow = worldToRow(doorBounds.y);
+        int lastRow = worldToRow(doorBounds.y + doorBounds.height - 1f);
+
+        for (int column = firstColumn; column <= lastColumn; column++) {
+            for (int row = firstRow; row <= lastRow; row++) {
+                doorsLayer.setCell(column, row, null);
+            }
+        }
     }
 }
