@@ -18,13 +18,14 @@ public abstract class Living {
     protected int maxHealth;
     protected float width;
     protected float height;
+    protected float hurtTimer = 0f;
     protected Rectangle bounds;
     protected static final int frameCount = 4;
     protected Direction currentDirection = Direction.DOWN;
     protected boolean isMoving = false;
     protected float stateTime = 0f;
     protected Array<Texture> loadedTextures = new Array<>();
-
+    protected Vector2 knockbackVelocity = new Vector2();
     protected Animation<TextureRegion> walkDown;
     protected Animation<TextureRegion> walkUp;
     protected Animation<TextureRegion> walkLeft;
@@ -62,7 +63,15 @@ public abstract class Living {
     }
     public abstract void update(float delta);
     public void render (SpriteBatch batch){
+        if(hurtTimer > 0f){
+            batch.setColor(1f, 0.25f, 0.25f, 1f);
+        }
+
         batch.draw(getCurrentFrame(),position.x,position.y, width, height);
+
+        if(hurtTimer > 0f){
+            batch.setColor(1f,1f,1f,1f);
+        }
     }
 
     protected TextureRegion getCurrentFrame(){
@@ -80,6 +89,7 @@ public abstract class Living {
     }
     public void takeDamage(int damage){
         this.health = Math.max(0,this.health - damage);
+        this.hurtTimer = 0.12f;
     }
 
     public boolean isAlive(){
@@ -136,7 +146,30 @@ public abstract class Living {
     }
 
     //Acts
+    public void applyKnockback(Vector2 attackerPosition,float force){
+        Vector2 direction = new Vector2(this.position).sub(attackerPosition).nor();
+        this.knockbackVelocity.set(direction.scl(force));
+    }
 
+    protected void updateCombatEffects(float delta){
+        if(hurtTimer > 0f){
+            hurtTimer = Math.max(0, hurtTimer - delta);
+        }
+        updateKnockback(delta);
+    }
+
+    protected void updateKnockback(float delta){
+        if(knockbackVelocity.len2() > 1f){
+            position.x += knockbackVelocity.x * delta;
+            position.y += knockbackVelocity.y * delta;
+            updateBounds();
+
+            knockbackVelocity.lerp(Vector2.Zero, 12f*delta);
+        }
+        else{
+            knockbackVelocity.setZero();
+        }
+    }
 
     protected void updateFacingDirection(Vector2 direction) {
         if (Math.abs(direction.x) > Math.abs(direction.y)) {
@@ -151,24 +184,12 @@ public abstract class Living {
         stateTime = 0f;
     }
 
-    protected void moveTowards(Vector2 destination, float moveSpeed, float delta, Living obstacle) {
+    protected void moveTowards(Vector2 destination, float moveSpeed, float delta) {
         Vector2 direction = new Vector2(destination).sub(position).nor();
 
-        float oldX = position.x;
         position.x += direction.x * moveSpeed * delta;
-        updateBounds();
-        if(obstacle != null && bounds.overlaps(obstacle.getBounds())){
-            position.x = oldX;
-            updateBounds();
-        }
-
-        float oldY = position.y;
         position.y += direction.y * moveSpeed * delta;
         updateBounds();
-        if(obstacle != null && bounds.overlaps(obstacle.getBounds())){
-            position.y = oldY;
-            updateBounds();
-        }
 
         updateFacingDirection(direction);
         isMoving = true;

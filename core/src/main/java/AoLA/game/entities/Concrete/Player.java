@@ -28,6 +28,7 @@ public class Player extends Living {
 
     @Override
     public void update(float delta) {
+        updateCombatEffects(delta);
         isMoving = false;
 
         if (Gdx.input.isKeyPressed(Input.Keys.A) || Gdx.input.isKeyPressed(Input.Keys.LEFT)) {

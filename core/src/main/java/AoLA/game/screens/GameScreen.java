@@ -4,6 +4,7 @@ import AoLA.game.HUD.HUD;
 import AoLA.game.Main;
 import AoLA.game.entities.Abstract.EnemyFactory;
 import AoLA.game.entities.Abstract.Enemy;
+import AoLA.game.entities.Concrete.Enemies.Mummy;
 import AoLA.game.entities.Concrete.Enemies.Skeleton;
 import AoLA.game.entities.Concrete.Player;
 import com.badlogic.gdx.Input;
@@ -55,7 +56,9 @@ public class GameScreen implements Screen {
 
         enemies = new ArrayList<>();
         EnemyFactory<Skeleton> skeletonFactory = Skeleton::new;
+        EnemyFactory<Mummy> mummyFactory = Mummy :: new;
         enemies.add(skeletonFactory.create(300,300,500,300,player));
+        enemies.add(mummyFactory.create(200,200,400,210,player));
     }
     @Override
     public void show() {

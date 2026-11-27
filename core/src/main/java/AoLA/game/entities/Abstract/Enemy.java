@@ -46,6 +46,7 @@ public abstract class Enemy extends Living {
 
     @Override
     public void update(float delta) {
+        updateCombatEffects(delta);
         if(!canAct()){
             return;
         }
@@ -104,7 +105,7 @@ public abstract class Enemy extends Living {
             switchPatrolTarget();
             return;
         }
-        moveTowards(currentPatrolTarget, speed * 0.7f, delta, target);
+        moveTowards(currentPatrolTarget, speed * 0.7f, delta);
     }
 
     private void switchPatrolTarget(){
@@ -117,7 +118,7 @@ public abstract class Enemy extends Living {
     }
 
     private void chase(float delta){
-        moveTowards(target.getPosition(),speed,delta, target);
+        moveTowards(target.getPosition(),speed,delta);
     }
 
     private void attack(){
