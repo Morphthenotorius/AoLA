@@ -14,7 +14,7 @@ import com.badlogic.gdx.utils.Array;
 public class Player extends Living {
 
     public Player(float x, float y) {
-        super(new Vector2(x, y), 200f, 100);
+        super(new Vector2(x, y), 200f, 100, 55f,80f);
 
         initAnimations(
             "akber.asset/akber.down",
@@ -53,7 +53,8 @@ public class Player extends Living {
 
         if (isMoving) {
             stateTime += delta;
-        } else {
+        }
+        else {
             stateTime = 0f;
         }
 

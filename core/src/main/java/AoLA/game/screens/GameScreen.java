@@ -2,6 +2,9 @@ package AoLA.game.screens;
 
 import AoLA.game.HUD.HUD;
 import AoLA.game.Main;
+import AoLA.game.entities.Abstract.EnemyFactory;
+import AoLA.game.entities.Abstract.Enemy;
+import AoLA.game.entities.Concrete.Enemies.Skeleton;
 import AoLA.game.entities.Concrete.Player;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
@@ -13,7 +16,11 @@ import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class GameScreen implements Screen {
+    private List<Enemy> enemies;
     private final Main game;
     private Player player;
     private HUD hud;
@@ -45,6 +52,10 @@ public class GameScreen implements Screen {
         player=new Player(100,100);
         hud=new HUD(game.menuFont);
         paused=false;
+
+        enemies = new ArrayList<>();
+        EnemyFactory<Skeleton> skeletonFactory = Skeleton::new;
+        enemies.add(skeletonFactory.create(300,300,500,300,player));
     }
     @Override
     public void show() {
@@ -60,6 +71,9 @@ public class GameScreen implements Screen {
         if (!paused) {
             player.update(delta);
             player.update(delta);
+            for(Enemy enemy : enemies){
+                enemy.update(delta);
+            }
             if (Gdx.input.isKeyJustPressed(Input.Keys.K)) player.takeDamage(10);
             if (!player.isAlive()) {
                 int score = hud.getScore();
@@ -81,6 +95,9 @@ public class GameScreen implements Screen {
         ScreenUtils.clear(0.15f, 0.15f, 0.2f, 1);
         game.batch.begin();
         player.render(game.batch);
+        for(Enemy enemy: enemies){
+            enemy.render(game.batch);
+        }
         hud.render(game.batch, 0, 0, width, height);
         game.batch.end();
         if (paused) {
@@ -148,5 +165,10 @@ public class GameScreen implements Screen {
         player.dispose();
         hud.dispose();
         pauseUiTexture.dispose();
+        if(enemies != null){
+            for(Enemy enemy: enemies){
+                enemy.dispose();
+            }
+        }
     }
 }
