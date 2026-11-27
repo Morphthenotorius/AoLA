@@ -1,6 +1,7 @@
 package AoLA.game.managers;
 
 import AoLA.game.entities.Abstract.Living;
+import AoLA.game.rules.GameRules;
 import AoLA.game.world.MazeMap;
 import com.badlogic.gdx.maps.MapLayer;
 import com.badlogic.gdx.maps.MapObject;
@@ -8,16 +9,15 @@ import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.maps.objects.TextureMapObject;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
-import java.util.HashSet;
-import java.util.Set;
 
 public class CollisionManager {
     private static final float CORNER_PADDING = 1f;
     private final MazeMap maze;
-    private final Set<Integer> collectedKeys = new HashSet<>();
+    private final GameRules gameRules;
 
-    public CollisionManager(MazeMap maze) {
+    public CollisionManager(MazeMap maze, GameRules gameRules) {
         this.maze = maze;
+        this.gameRules = gameRules;
     }
 
     //Moves a character and stops it before it enters a wall.
@@ -58,20 +58,20 @@ public class CollisionManager {
             float keyHeight = tileKey.getTextureRegion().getRegionHeight() * tileKey.getScaleY();
             Rectangle keyBounds = new Rectangle(tileKey.getX(), tileKey.getY(), keyWidth, keyHeight);
 
-            if (characterBounds.overlaps(keyBounds) && collectedKeys.add(keyId)) {
+            if (characterBounds.overlaps(keyBounds) && gameRules.collectKey(keyId)) {
                 key.setVisible(false);
-                openDoorsForKey(keyId);
-
+                openUnlockedDoors();
             }
         }
     }
 
-    private void openDoorsForKey(int keyId) {
+    private void openUnlockedDoors() {
         MapLayer doorsLayer = maze.getMap().getLayers().get(MazeMap.DOORS_OBJECT_LAYER);
 
         for (MapObject door : doorsLayer.getObjects()) {
             Integer doorKeyId = door.getProperties().get("keyId", Integer.class);
-            if (doorKeyId != null && doorKeyId.equals(keyId) && door instanceof RectangleMapObject) {
+            if (doorKeyId != null && gameRules.isDoorUnlocked(doorKeyId)
+                && door instanceof RectangleMapObject) {
                 Rectangle doorBounds = ((RectangleMapObject) door).getRectangle();
                 maze.openDoor(doorBounds);
             }
@@ -101,7 +101,8 @@ public class CollisionManager {
 
         for (MapObject door : doorsLayer.getObjects()) {
             Integer keyId = door.getProperties().get("keyId", Integer.class);
-            if (keyId == null || collectedKeys.contains(keyId) || !(door instanceof RectangleMapObject)) {
+            if (keyId == null || gameRules.isDoorUnlocked(keyId)
+                || !(door instanceof RectangleMapObject)) {
                 continue;
             }
 

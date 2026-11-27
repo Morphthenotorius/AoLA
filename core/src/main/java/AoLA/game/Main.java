@@ -1,6 +1,7 @@
 package AoLA.game;
 
 import AoLA.game.screens.MenuScreen;
+import AoLA.game.screens.GameScreen;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
@@ -65,7 +66,6 @@ public class Main extends Game {
         int edge = 6;
         buttonNormal = new NinePatch(buttonNormalTexture, edge, edge, edge, edge);
         buttonHover = new NinePatch(buttonHoverTexture, edge, edge, edge, edge);
-        skullTexture = new Texture(Gdx.files.internal("ui/skull.png"));
         skullTexture.setFilter(
             Texture.TextureFilter.Nearest, Texture.TextureFilter.Nearest);
         preferences = Gdx.app.getPreferences("AoLALeaderboard");
@@ -93,16 +93,13 @@ public class Main extends Game {
     @Override
     public void render() {
         if (Gdx.input.isKeyJustPressed(Input.Keys.F11)) {
-            toggleFullscreen();
+            if (Gdx.graphics.isFullscreen()) {
+                Gdx.graphics.setWindowedMode((int) WORLD_W, (int) WORLD_H);
+            } else {
+                Gdx.graphics.setFullscreenMode(Gdx.graphics.getDisplayMode());
+            }
         }
         super.render();
-    }
-    public void toggleFullscreen() {
-        if (Gdx.graphics.isFullscreen()) {
-            Gdx.graphics.setWindowedMode((int) WORLD_W, (int) WORLD_H);
-        } else {
-            Gdx.graphics.setFullscreenMode(Gdx.graphics.getDisplayMode());
-        }
     }
     @Override
     public void dispose() {
@@ -115,7 +112,7 @@ public class Main extends Game {
         buttonNormalTexture.dispose();
         trophyTexture.dispose();
         uiPanel.dispose();
-        titleFont.dispose();titleFont.dispose();
+        titleFont.dispose();
         wingsTexture.dispose();
         buttonHoverTexture.dispose();
         skullTexture.dispose();

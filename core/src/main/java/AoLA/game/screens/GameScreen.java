@@ -3,6 +3,7 @@ package AoLA.game.screens;
 import AoLA.game.HUD.HUD;
 import AoLA.game.Main;
 import AoLA.game.entities.Concrete.Player;
+import AoLA.game.rules.GameRules;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
@@ -14,10 +15,20 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
+import AoLA.game.managers.CollisionManager;
+import AoLA.game.world.MazeMap;
+import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.utils.viewport.FitViewport;
+import com.badlogic.gdx.utils.viewport.Viewport;
 
 public class GameScreen implements Screen {
     private final Main game;
     private Player player;
+    private MazeMap maze;
+    private GameRules gameRules;
+    private CollisionManager collisionManager;
+    private OrthographicCamera camera;
+    private Viewport viewport;
     private HUD hud;
     private DoorArrow doorArrow;
     private Texture pauseUiTexture;
@@ -36,7 +47,6 @@ public class GameScreen implements Screen {
         pauseUiTexture = new Texture(Gdx.files.internal("FreeHorrorUi.png"));
         pauseUiTexture.setFilter(Texture.TextureFilter.Nearest, Texture.TextureFilter.Nearest);
         pausePanel = new TextureRegion(pauseUiTexture, 128, 132, 64, 72);
-        startNewGame();
     }
     private void startNewGame(){
         if (player != null){
@@ -50,13 +60,20 @@ public class GameScreen implements Screen {
         }
         doorArrow = new DoorArrow();
         doorArrow.setTarget(500, 350);   // TEST: müvəqqəti qapı mövqeyi
-        player=new Player(100,100);
+        Vector2 spawn = maze.getPlayerSpawn();
+        player = new Player(spawn.x, spawn.y, collisionManager);
+        camera.position.set(spawn.x, spawn.y, 0);
         hud=new HUD(game.menuFont);
         paused=false;
     }
     @Override
     public void show() {
-        game.resizeCamera(Gdx.graphics.getWidth(),Gdx.graphics.getHeight());
+        camera = new OrthographicCamera();
+        viewport = new FitViewport(1280, 720, camera);
+        maze = new MazeMap(game.batch);
+        gameRules = new GameRules();
+        collisionManager = new CollisionManager(maze, gameRules);
+        startNewGame();
     }
     public void render(float delta) {
         int width = Gdx.graphics.getWidth();
@@ -66,7 +83,6 @@ public class GameScreen implements Screen {
         }
         float pauseTop = 0f;
         if (!paused) {
-            player.update(delta);
             player.update(delta);
             if (Gdx.input.isKeyJustPressed(Input.Keys.K)) player.takeDamage(10);
             if (!player.isAlive()) {
@@ -90,10 +106,24 @@ public class GameScreen implements Screen {
                 return;
             }
         }
+        viewport.apply();
+        camera.position.set(
+            player.getPosition().x + 32f,
+            player.getPosition().y + 32f,
+            0f
+        );
+        camera.update();
         ScreenUtils.clear(0.15f, 0.15f, 0.2f, 1);
+        maze.render(camera);
+        game.batch.setProjectionMatrix(camera.combined);
         game.batch.begin();
+        maze.renderObjects(game.batch);
         player.render(game.batch);
         doorArrow.render(game.batch, player.getPosition(), 32f);
+        game.batch.end();
+
+        game.batch.setProjectionMatrix(game.camera.combined);
+        game.batch.begin();
         hud.render(game.batch, 0, 0, width, height);
         game.batch.end();
         if (paused) {
@@ -145,6 +175,7 @@ public class GameScreen implements Screen {
     }
     @Override
     public void resize(int width, int height) {
+        viewport.update(width, height, true);
         game.resizeCamera(width, height);
     }
     @Override
@@ -162,5 +193,6 @@ public class GameScreen implements Screen {
         hud.dispose();
         doorArrow.dispose();
         pauseUiTexture.dispose();
+        maze.dispose();
     }
 }
