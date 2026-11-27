@@ -25,10 +25,13 @@ public class HUD {
     public void update(float delta){
         healthBar.update(delta);
     }
+
     public void render(SpriteBatch batch, float x, float y, float width, float height) {
         float s  = KeyIndicator.SCALE;
         float fx = 20;
         float fy = height - 20 - KeyIndicator.FRAME_H * s;
+        float oldScaleX = font.getData().scaleX;
+        float oldScaleY = font.getData().scaleY;
         batch.end();
         shapeRenderer.setProjectionMatrix(batch.getProjectionMatrix());
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
@@ -44,12 +47,12 @@ public class HUD {
         float barH=15*s;
         font.setColor(Color.WHITE);
         font.draw(batch,text,barX+(barW-glyph.width)/2f,barY+(barH+glyph.height)/2f);
-        font.getData().setScale(0.1f);
         float coinWidth  = 32;
         float coinHeight = 32;
         float coinX = width  - 120;
         float coinY = fy + (KeyIndicator.FRAME_H * s - coinHeight) / 2f;
         coinCounter.render(batch, coinX, coinY, coinWidth, coinHeight);
+        font.getData().setScale(oldScaleX, oldScaleY);
     }
     public void addCoin(){
         coinCounter.addCoin();

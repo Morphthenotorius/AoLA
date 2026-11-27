@@ -22,9 +22,12 @@ public class CoinCounter {
         return coins;
     }
     public void render(SpriteBatch batch,float x,float y,float width,float height){
+        float oldScaleX = font.getData().scaleX;
+        float oldScaleY = font.getData().scaleY;
         batch.draw(coinTexture,x,y,width,height);
         font.getData().setScale(0.85f);
         font.draw(batch,String.valueOf(coins),x+width+10,y+height/2f+font.getCapHeight()/2f);
+        font.getData().setScale(oldScaleX, oldScaleY);
     }
     public void dispose(){
         coinTexture.dispose();

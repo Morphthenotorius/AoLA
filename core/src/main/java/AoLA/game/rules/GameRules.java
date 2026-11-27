@@ -15,4 +15,7 @@ public class GameRules {
     public boolean isDoorUnlocked(int keyId) {
         return collectedKeyIds.contains(keyId);
     }
+    public int getCollectedKeyCount() {
+        return collectedKeyIds.size();
+    }
 }

@@ -4,6 +4,7 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.TiledMap;
+import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.objects.TiledMapTileMapObject;
@@ -51,7 +52,21 @@ public class MazeMap implements Disposable {
         buildWallGrid();
         renderer = new OrthogonalTiledMapRenderer(map, 1f, batch);
     }
-
+    public Vector2 getExitPosition() {
+        MapLayer exitLayer = map.getLayers().get(KEYS_OBJECT_LAYER);
+        if (exitLayer == null) {
+            throw new GdxRuntimeException("Missing layer '" + KEYS_OBJECT_LAYER + "' in " + MAP_PATH);
+        }
+        MapObject exitObject = exitLayer.getObjects().get("Exit");
+        if (exitObject == null || !(exitObject instanceof RectangleMapObject)) {
+            throw new GdxRuntimeException("Missing rectangle object 'Exit' in " + KEYS_OBJECT_LAYER);
+        }
+        Rectangle exitBounds = ((RectangleMapObject) exitObject).getRectangle();
+        return new Vector2(
+            exitBounds.x + exitBounds.width / 2f,
+            exitBounds.y + exitBounds.height / 2f
+        );
+    }
     public Vector2 getPlayerSpawn() {
         for (MapLayer layer : map.getLayers()) {
             MapObject obj = layer.getObjects().get(PLAYER_SPAWN_NAME);

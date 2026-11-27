@@ -1,3 +1,4 @@
+
 package AoLA.game.screens;
 
 import AoLA.game.HUD.HUD;
@@ -48,32 +49,40 @@ public class GameScreen implements Screen {
         pauseUiTexture.setFilter(Texture.TextureFilter.Nearest, Texture.TextureFilter.Nearest);
         pausePanel = new TextureRegion(pauseUiTexture, 128, 132, 64, 72);
     }
-    private void startNewGame(){
-        if (player != null){
+
+
+    private void startNewGame() {
+        if (player != null) {
             player.dispose();
         }
-        if(hud != null){
+        if (hud != null) {
             hud.dispose();
         }
         if (doorArrow != null) {
             doorArrow.dispose();
         }
-        doorArrow = new DoorArrow();
-        doorArrow.setTarget(500, 350);   // TEST: müvəqqəti qapı mövqeyi
-        Vector2 spawn = maze.getPlayerSpawn();
-        player = new Player(spawn.x, spawn.y, collisionManager);
-        camera.position.set(spawn.x, spawn.y, 0);
-        hud=new HUD(game.menuFont);
-        paused=false;
-    }
-    @Override
-    public void show() {
-        camera = new OrthographicCamera();
-        viewport = new FitViewport(1280, 720, camera);
+        if (maze != null) {
+            maze.dispose();
+        }
         maze = new MazeMap(game.batch);
         gameRules = new GameRules();
         collisionManager = new CollisionManager(maze, gameRules);
-        startNewGame();
+        doorArrow = new DoorArrow();
+        Vector2 exit = maze.getExitPosition();
+        doorArrow.setTarget(exit.x, exit.y);
+        Vector2 spawn = maze.getPlayerSpawn();
+        player = new Player(spawn.x, spawn.y, collisionManager);
+        camera.position.set(spawn.x, spawn.y, 0);
+        hud = new HUD(game.menuFont);
+        paused = false;
+    }
+    @Override
+    public void show() {
+        if (maze == null) {
+            camera = new OrthographicCamera();
+            viewport = new FitViewport(1280, 720, camera);
+            startNewGame();
+        }
     }
     public void render(float delta) {
         int width = Gdx.graphics.getWidth();
@@ -84,6 +93,10 @@ public class GameScreen implements Screen {
         float pauseTop = 0f;
         if (!paused) {
             player.update(delta);
+            int collectedCoins = collisionManager.collectCoins(player);
+            for (int i = 0; i < collectedCoins; i++) {
+                hud.addCoin();
+            }
             if (Gdx.input.isKeyJustPressed(Input.Keys.K)) player.takeDamage(10);
             if (!player.isAlive()) {
                 int score = hud.getScore();
@@ -99,6 +112,7 @@ public class GameScreen implements Screen {
             hud.update(delta);
             doorArrow.update(delta);
             hud.getHealthBar().setHealth(player.getHealth());
+            hud.getKeyIndicator().setKeyCount(gameRules.getCollectedKeyCount());
             game.submitScore(hud.getScore());
         } else {
             pauseTop = MenuButton.layoutColumn(pauseButtons, width, height);

@@ -1,3 +1,4 @@
+
 package AoLA.game.managers;
 
 import AoLA.game.entities.Abstract.Living;
@@ -63,6 +64,38 @@ public class CollisionManager {
                 openUnlockedDoors();
             }
         }
+    }
+
+    /** Collects coins that overlap the character. */
+    public int collectCoins(Living character) {
+        MapLayer coinsLayer = maze.getMap().getLayers().get(MazeMap.KEYS_OBJECT_LAYER);
+        Rectangle characterBounds = new Rectangle(
+            character.getPosition().x,
+            character.getPosition().y,
+            character.getWidth(),
+            character.getHeight()
+        );
+
+        int collectedCoins = 0;
+
+        for (MapObject coin : coinsLayer.getObjects()) {
+            if (!coin.isVisible() || !(coin instanceof TextureMapObject)
+                || coin.getProperties().containsKey("keyId")) {
+                continue;
+            }
+
+            TextureMapObject tileCoin = (TextureMapObject) coin;
+            float coinWidth = tileCoin.getTextureRegion().getRegionWidth() * tileCoin.getScaleX();
+            float coinHeight = tileCoin.getTextureRegion().getRegionHeight() * tileCoin.getScaleY();
+            Rectangle coinBounds = new Rectangle(tileCoin.getX(), tileCoin.getY(), coinWidth, coinHeight);
+
+            if (characterBounds.overlaps(coinBounds)) {
+                coin.setVisible(false);
+                collectedCoins++;
+            }
+        }
+
+        return collectedCoins;
     }
 
     private void openUnlockedDoors() {
