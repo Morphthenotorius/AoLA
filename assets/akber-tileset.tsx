@@ -6,6 +6,6 @@
    <property name="life" type="float" value="10"/>
    <property name="speed" type="float" value="3"/>
   </properties>
-  <image source="../akber.asset/akber.down/0.png" width="139" height="133"/>
+  <image source="akber.asset/akber.down/0.png" width="139" height="133"/>
  </tile>
 </tileset>
