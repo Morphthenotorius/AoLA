@@ -16,7 +16,7 @@ public class DoorArrow {
     private final Vector2 target = new Vector2();
     private final Vector2 direction = new Vector2();
     private boolean hasTarget = false;
-    private float time = 0f; // Oxun yüngülcə irəli-geri hərəkəti üçün
+    private float time = 0f;
     public DoorArrow() {
         texture = new Texture(Gdx.files.internal("ui/arrow.png"));
         texture.setFilter(Texture.TextureFilter.Nearest, Texture.TextureFilter.Nearest);
