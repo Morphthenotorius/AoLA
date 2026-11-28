@@ -23,6 +23,7 @@ public class MenuScreen implements Screen {
     @Override
     public void show() {
         game.resizeCamera(Gdx.graphics.getWidth(),Gdx.graphics.getHeight());
+        game.soundManager.playMenuMusic();
     }
     @Override
     public void render(float delta) {
